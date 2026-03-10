@@ -1,39 +1,24 @@
-/*=============== BASE ===============*/
-*{
-	box-sizing: border-box;
-	padding: 0;
-	margin: 0;
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
 }
 
-body,
-input,
-button{
-	font-family: var(--body-font);
-	font-size: var(--normal-font-size);
+body, input, button {
+  font-family: var(--body-font);
+  font-size: var(--normal-font-size);
 }
 
-body{
-	background-color: var(--body-color);
-	color: var(--text-color);
-	font-weight: 600;
+body {
+  background-color: var(--body-color);
+  color: var(--text-color);
+  font-weight: 600;
 }
 
-input,
-button{
-	border: none;
-	outline: none;
+input, button {
+  border: none;
+  outline: none;
 }
 
-ul{
-	list-style: none;
-}
-
-a{
-	text-decoration: none;
-}
-
-img{
-	display: block;
-	max-width: 100%;
-	height: auto;
-}
+a { text-decoration: none; }
+img { display: block; max-width: 100%; height: auto; }
