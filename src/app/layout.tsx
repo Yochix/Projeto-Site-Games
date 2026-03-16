@@ -1,4 +1,4 @@
-import '../assets/scss/style.scss' // <--- AQUI o Next lê seu SASS todinho
+import '@/assets/scss/style.scss' // <--- AQUI o Next lê seu SASS todinho
 import 'remixicon/fonts/remixicon.css' // Se você instalou pelo npm
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
