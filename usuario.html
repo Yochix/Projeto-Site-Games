@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>LinKey — Perfil</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="logo">LinKey</a>
+  <div class="header-actions">
+    <a href="login.html" class="btn-login" style="background:transparent;border:1px solid var(--border);color:var(--muted);font-size:0.75rem;padding:6px 12px;">Sair</a>
+  </div>
+</header>
+
+<div class="page-inner">
+
+  <!-- HERO DO PERFIL -->
+  <div class="profile-hero">
+    <div class="profile-avatar">JD</div>
+    <div class="profile-name">João da Silva</div>
+    <div class="profile-handle">@joaodasilva</div>
+    <div class="profile-stats">
+      <div class="stat">
+        <span class="stat-value">12</span>
+        <span class="stat-label">Baixados</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">7</span>
+        <span class="stat-label">Favoritos</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">3</span>
+        <span class="stat-label">Reviews</span>
+      </div>
+    </div>
+    <button class="btn-edit">✏️ Editar perfil</button>
+  </div>
+
+  <!-- JOGOS BAIXADOS -->
+  <div class="profile-section">
+    <div class="profile-section-title">⬇ Jogos baixados</div>
+    <div class="dl-list">
+
+      <a href="jogo.html" class="dl-item">
+        <img src="https://images.unsplash.com/photo-1535223289827-42f1e9919769?w=200&q=70" alt="">
+        <div class="dl-item-info">
+          <div class="dl-item-name">Cyber Raid</div>
+          <div class="dl-item-cat">Ação · RPG</div>
+        </div>
+        <span class="dl-item-badge">✓ Instalado</span>
+      </a>
+
+      <a href="jogo.html" class="dl-item">
+        <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?w=200&q=70" alt="">
+        <div class="dl-item-info">
+          <div class="dl-item-name">Dragon Run</div>
+          <div class="dl-item-cat">Aventura</div>
+        </div>
+        <span class="dl-item-badge">✓ Instalado</span>
+      </a>
+
+      <a href="jogo.html" class="dl-item">
+        <img src="https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?w=200&q=70" alt="">
+        <div class="dl-item-info">
+          <div class="dl-item-name">Warlords</div>
+          <div class="dl-item-cat">Estratégia</div>
+        </div>
+        <span class="dl-item-badge">✓ Instalado</span>
+      </a>
+
+      <a href="jogo.html" class="dl-item">
+        <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=200&q=70" alt="">
+        <div class="dl-item-info">
+          <div class="dl-item-name">Shadow Keep</div>
+          <div class="dl-item-cat">Terror · Survival</div>
+        </div>
+        <span class="dl-item-badge">✓ Instalado</span>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- MENU DE OPÇÕES -->
+  <div class="profile-menu">
+
+    <button class="menu-item" onclick="location.href='#'">
+      <span class="menu-icon">❤️</span>
+      Meus favoritos
+      <span class="menu-arrow">›</span>
+    </button>
+
+    <button class="menu-item" onclick="location.href='#'">
+      <span class="menu-icon">⭐</span>
+      Minhas avaliações
+      <span class="menu-arrow">›</span>
+    </button>
+
+    <button class="menu-item" onclick="location.href='#'">
+      <span class="menu-icon">🔔</span>
+      Notificações
+      <span class="menu-arrow">›</span>
+    </button>
+
+    <button class="menu-item" onclick="location.href='#'">
+      <span class="menu-icon">⚙️</span>
+      Configurações
+      <span class="menu-arrow">›</span>
+    </button>
+
+    <button class="menu-item" onclick="location.href='#'">
+      <span class="menu-icon">❓</span>
+      Ajuda e suporte
+      <span class="menu-arrow">›</span>
+    </button>
+
+    <button class="menu-item danger" onclick="location.href='login.html'">
+      <span class="menu-icon">🚪</span>
+      Sair da conta
+    </button>
+
+  </div>
+
+</div>
+
+<nav class="bottom-nav">
+  <button class="nav-tab" onclick="location.href='index.html'">
+    <span class="nav-icon">🏠</span>Início
+  </button>
+  <button class="nav-tab" onclick="location.href='#'">
+    <span class="nav-icon">🔍</span>Explorar
+  </button>
+  <button class="nav-tab active" onclick="location.href='usuario.html'">
+    <span class="nav-icon">👤</span>Conta
+  </button>
+</nav>
+
+<div class="toast" id="toast"></div>
+<script src="script.js"></script>
+</body>
+</html>
