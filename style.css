@@ -79,6 +79,28 @@ header {
 }
 .search-box input::placeholder { color: var(--muted); }
 
+/* ── CATEGORIES ── */
+.categories-wrap { padding: 4px 0 12px; }
+.categories-scroll {
+  display: flex; gap: 8px;
+  overflow-x: auto; scrollbar-width: none;
+  padding: 0 16px;
+}
+.categories-scroll::-webkit-scrollbar { display: none; }
+.cat-pill {
+  background: var(--bg3); border: 1px solid var(--border);
+  color: var(--muted); font-size: 0.8rem; font-weight: 500;
+  padding: 8px 16px; border-radius: 20px;
+  white-space: nowrap; transition: all 0.2s;
+}
+.cat-pill.active {
+  background: var(--accent); color: #fff; border-color: var(--accent);
+  box-shadow: 0 4px 12px rgba(91,143,255,0.3);
+}
+@media (min-width: 860px) {
+  .categories-scroll { padding: 0; }
+}
+
 /* ── SECTION HEADER ── */
 .section-header {
   display: flex; align-items: baseline; justify-content: space-between;

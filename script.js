@@ -26,23 +26,54 @@ const allCards    = document.querySelectorAll('.game-card');
 const empty       = document.getElementById('empty');
 const gridTitle   = document.getElementById('grid-title');
 const featSection = document.getElementById('featured-section');
+const catPills    = document.querySelectorAll('.cat-pill');
+
+let currentFilter = 'all';
+
+function filterGames() {
+  const q = searchInput ? searchInput.value.trim().toLowerCase() : '';
+  let found = 0;
+
+  allCards.forEach(card => {
+    const name = (card.dataset.name || '').toLowerCase();
+    const cat  = (card.dataset.cat  || '').toLowerCase();
+    
+    const matchesSearch = !q || name.includes(q) || cat.includes(q);
+    const matchesCat    = currentFilter === 'all' || cat === currentFilter;
+    
+    const show = matchesSearch && matchesCat;
+    card.style.display = show ? '' : 'none';
+    if (show) found++;
+  });
+
+  if (empty)       empty.style.display = found === 0 ? 'block' : 'none';
+  if (featSection) featSection.style.display = (q || currentFilter !== 'all') ? 'none' : '';
+  
+  if (gridTitle) {
+    if (q) {
+      gridTitle.textContent = `🔍 "${searchInput.value}" — ${found} resultado${found !== 1 ? 's' : ''}`;
+    } else if (currentFilter !== 'all') {
+      const activePill = document.querySelector('.cat-pill.active');
+      const catName = activePill ? activePill.textContent.split(' ')[1] : '';
+      gridTitle.textContent = `🎮 Jogos de ${catName} — ${found} resultado${found !== 1 ? 's' : ''}`;
+    } else {
+      gridTitle.textContent = '🎮 Todos os jogos';
+    }
+  }
+}
 
 if (searchInput) {
-  searchInput.addEventListener('input', () => {
-    const q = searchInput.value.trim().toLowerCase();
-    let found = 0;
-    allCards.forEach(card => {
-      const name = (card.dataset.name || '').toLowerCase();
-      const cat  = (card.dataset.cat  || '').toLowerCase();
-      const show = !q || name.includes(q) || cat.includes(q);
-      card.style.display = show ? '' : 'none';
-      if (show) found++;
+  searchInput.addEventListener('input', filterGames);
+}
+
+if (catPills.length > 0) {
+  catPills.forEach(pill => {
+    pill.addEventListener('click', () => {
+      catPills.forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      currentFilter = pill.dataset.cat;
+      filterGames();
     });
-    if (empty)       empty.style.display = found === 0 ? 'block' : 'none';
-    if (featSection) featSection.style.display = q ? 'none' : '';
-    if (gridTitle)   gridTitle.textContent = q
-      ? `🔍 "${searchInput.value}" — ${found} resultado${found !== 1 ? 's' : ''}`
-      : '🎮 Todos os jogos';
   });
 }
 
