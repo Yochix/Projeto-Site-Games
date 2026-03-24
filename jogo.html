@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>LinKey — Cyber Raid</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="logo">LinKey</a>
+  <div class="header-actions">
+    <a href="usuario.html" class="header-avatar">JD</a>
+  </div>
+</header>
+
+<div class="page-inner">
+
+  <!-- HERO -->
+  <div class="game-hero">
+    <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=860&q=85" alt="Cyber Raid">
+    <div class="game-hero-overlay"></div>
+    <button class="game-hero-back" onclick="history.back()">← Voltar</button>
+  </div>
+
+  <div class="game-info">
+
+    <!-- TOPO: ícone + info + fav -->
+    <div class="game-info-top">
+      <img class="game-icon" src="https://images.unsplash.com/photo-1535223289827-42f1e9919769?w=200&q=80" alt="Cyber Raid icon">
+      <div class="game-meta">
+        <div class="game-page-title">Cyber Raid: Neo Frontier</div>
+        <div class="game-page-cat">Ação · RPG · Multiplayer</div>
+        <div class="game-page-rating">
+          <span class="stars">★★★★★</span> 4.8 <span style="color:var(--border)">·</span> 12.4k avaliações
+        </div>
+      </div>
+      <button onclick="this.textContent=this.textContent.trim()==='❤️'?'🤍':'❤️'" style="background:none;border:none;font-size:1.5rem;padding:4px;cursor:pointer;margin-top:4px;">🤍</button>
+    </div>
+
+    <!-- BOTÃO DE DOWNLOAD -->
+    <button class="btn-dl-page" id="dlBtn" onclick="baixarJogo()">⬇ Baixar Grátis</button>
+
+    <!-- SCREENSHOTS -->
+    <div class="game-section">
+      <div class="game-section-title">📸 Screenshots</div>
+      <div class="game-screenshots">
+        <img class="screenshot" src="https://images.unsplash.com/photo-1535223289827-42f1e9919769?w=300&q=70" alt="">
+        <img class="screenshot" src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=300&q=70" alt="">
+        <img class="screenshot" src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=300&q=70" alt="">
+        <img class="screenshot" src="https://images.unsplash.com/photo-1500462918059-b1a0cb512f1d?w=300&q=70" alt="">
+      </div>
+    </div>
+
+    <!-- DESCRIÇÃO -->
+    <div class="game-section">
+      <div class="game-section-title">📋 Sobre o jogo</div>
+      <p class="game-desc collapsed" id="gameDesc">
+        Cyber Raid: Neo Frontier é um RPG de ação no universo cyberpunk onde você assume o papel de um mercenário no submundo digital. Explore cidades neon, monte seu arsenal de habilidades, e enfrente outros jogadores em batalhas online em tempo real. Com gráficos de alta qualidade otimizados para mobile e controles intuitivos, cada missão é uma nova aventura. O jogo conta com mais de 50 missões solo, modo arena PvP, sistema de clãs e atualizações mensais de conteúdo.
+      </p>
+      <button class="btn-read-more" id="readMore" onclick="toggleDesc()">Ver mais ↓</button>
+    </div>
+
+    <!-- TAGS -->
+    <div class="game-section">
+      <div class="game-section-title">🏷 Categorias</div>
+      <div class="game-tags">
+        <span class="game-tag">Ação</span>
+        <span class="game-tag">RPG</span>
+        <span class="game-tag">Multiplayer</span>
+        <span class="game-tag">Cyberpunk</span>
+        <span class="game-tag">PvP</span>
+        <span class="game-tag">Grátis</span>
+        <span class="game-tag">Online</span>
+      </div>
+    </div>
+
+    <!-- AVALIAÇÕES -->
+    <div class="game-section">
+      <div class="game-section-title">⭐ Avaliações</div>
+      <div class="reviews-list">
+
+        <div class="review-item">
+          <div class="review-header">
+            <div class="review-avatar">MR</div>
+            <div class="review-name">Marcos R.</div>
+            <div class="review-stars">★★★★★</div>
+          </div>
+          <div class="review-text">Melhor jogo mobile que já joguei. Os gráficos são incríveis e o sistema de batalha é muito fluído. Recomendo muito!</div>
+        </div>
+
+        <div class="review-item">
+          <div class="review-header">
+            <div class="review-avatar">AS</div>
+            <div class="review-name">Ana S.</div>
+            <div class="review-stars">★★★★☆</div>
+          </div>
+          <div class="review-text">Muito viciante! Só perco um pouco no PvP, precisa equilibrar melhor os personagens. Mas o jogo todo é ótimo.</div>
+        </div>
+
+        <div class="review-item">
+          <div class="review-header">
+            <div class="review-avatar">LF</div>
+            <div class="review-name">Lucas F.</div>
+            <div class="review-stars">★★★★★</div>
+          </div>
+          <div class="review-text">Jogando há 3 meses e não consigo parar. O sistema de clãs é incrível, fizemos uma comunidade incrível no jogo.</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- MAIS JOGOS -->
+    <div class="game-section">
+      <div class="section-header" style="padding:0 0 10px;">
+        <span class="section-title" style="font-size:0.88rem;">🎮 Você também pode gostar</span>
+        <a href="index.html" class="section-link">Ver todos</a>
+      </div>
+      <div style="display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;padding-bottom:8px;">
+
+        <a href="jogo.html" style="flex:0 0 120px;text-decoration:none;color:inherit;">
+          <img src="https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?w=200&q=70" alt="" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;border:1px solid var(--border);">
+          <div style="font-size:0.75rem;font-weight:500;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Warlords</div>
+          <div style="font-size:0.65rem;color:var(--accent);">Grátis</div>
+        </a>
+
+        <a href="jogo.html" style="flex:0 0 120px;text-decoration:none;color:inherit;">
+          <img src="https://images.unsplash.com/photo-1500462918059-b1a0cb512f1d?w=200&q=70" alt="" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;border:1px solid var(--border);">
+          <div style="font-size:0.75rem;font-weight:500;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Space Wars</div>
+          <div style="font-size:0.65rem;color:var(--accent);">Grátis</div>
+        </a>
+
+        <a href="jogo.html" style="flex:0 0 120px;text-decoration:none;color:inherit;">
+          <img src="https://images.unsplash.com/photo-1486572788966-cfd3df1f5b42?w=200&q=70" alt="" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;border:1px solid var(--border);">
+          <div style="font-size:0.75rem;font-weight:500;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Dungeon Quest</div>
+          <div style="font-size:0.65rem;color:var(--accent);">Grátis</div>
+        </a>
+
+        <a href="jogo.html" style="flex:0 0 120px;text-decoration:none;color:inherit;">
+          <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?w=200&q=70" alt="" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;border:1px solid var(--border);">
+          <div style="font-size:0.75rem;font-weight:500;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Dragon Run</div>
+          <div style="font-size:0.65rem;color:var(--accent);">Grátis</div>
+        </a>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<nav class="bottom-nav">
+  <button class="nav-tab" onclick="location.href='index.html'">
+    <span class="nav-icon">🏠</span>Início
+  </button>
+  <button class="nav-tab" onclick="location.href='#'">
+    <span class="nav-icon">🔍</span>Explorar
+  </button>
+  <button class="nav-tab" onclick="location.href='usuario.html'">
+    <span class="nav-icon">👤</span>Conta
+  </button>
+</nav>
+
+<div class="toast" id="toast"></div>
+<script src="script.js"></script>
+<script>
+function baixarJogo() {
+  const btn = document.getElementById('dlBtn');
+  if (btn.classList.contains('baixado')) { showToast('✅ Jogo já baixado!'); return; }
+  btn.classList.add('baixado');
+  btn.textContent = '✓ Instalado';
+  showToast('⬇ Download iniciado!');
+}
+function toggleDesc() {
+  const desc = document.getElementById('gameDesc');
+  const btn  = document.getElementById('readMore');
+  const col  = desc.classList.toggle('collapsed');
+  btn.textContent = col ? 'Ver mais ↓' : 'Ver menos ↑';
+}
+</script>
+</body>
+</html>
