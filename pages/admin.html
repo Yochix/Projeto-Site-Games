@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>LinKey — Painel Admin</title>
+<script>
+  // Segurança: Se não for admin, volta para a home
+  const user = JSON.parse(localStorage.getItem('linkey_user_data') || '{}');
+  if (user.role !== 'admin') {
+    window.location.href = '../index.html';
+  }
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&display=swap">
+<link rel="stylesheet" href="../css/style.css">
+<style>
+  .admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+  }
+  .admin-title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    font-family: 'Syne', sans-serif;
+  }
+  
+  /* Stats Cards */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  @media (min-width: 768px) {
+    .stats-grid { grid-template-columns: repeat(4, 1fr); }
+  }
+  .stat-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .stat-card-label {
+    font-size: 0.75rem;
+    color: var(--muted);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .stat-card-value {
+    font-size: 1.5rem;
+    font-weight: 800;
+    font-family: 'Syne', sans-serif;
+  }
+  .stat-card-trend {
+    font-size: 0.7rem;
+    color: #10b981;
+    font-weight: 700;
+  }
+
+  /* Admin Tabs */
+  .admin-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    scrollbar-width: none;
+  }
+  .admin-tabs::-webkit-scrollbar { display: none; }
+  
+  .admin-tab-btn {
+    white-space: nowrap;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  .admin-tab-btn.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+    box-shadow: 0 4px 12px rgba(91, 143, 255, 0.3);
+  }
+
+  /* Tables/Lists */
+  .admin-table-container {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .table-row {
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    border-bottom: 1px solid var(--border);
+    gap: 16px;
+  }
+  .table-row:last-child { border-bottom: none; }
+  .table-cell-main { flex: 1; }
+  .table-cell-name { font-weight: 700; font-size: 0.95rem; margin-bottom: 2px; }
+  .table-cell-sub { font-size: 0.75rem; color: var(--muted); }
+  .table-actions { display: flex; gap: 8px; }
+  .btn-action {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--text);
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  .btn-action:hover { background: var(--bg); border-color: var(--muted); }
+  .btn-action.danger:hover { background: #ef4444; border-color: #ef4444; color: #fff; }
+
+  /* Charts Placeholder */
+  .chart-box {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 32px;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 12px;
+  }
+  .chart-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    height: 100px;
+  }
+  .chart-bar {
+    flex: 1;
+    background: var(--accent);
+    border-radius: 4px 4px 0 0;
+    opacity: 0.6;
+    transition: height 1s ease-out, opacity 0.2s;
+  }
+  .chart-bar:hover { opacity: 1; }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="../index.html" class="logo">LinKey</a>
+  <div class="header-actions">
+    <a href="usuario.html" class="header-avatar" id="headAv"></a>
+  </div>
+</header>
+
+<div class="page-inner">
+  <div class="admin-header">
+    <h1 class="admin-title">Painel Admin</h1>
+    <div class="stat-card-trend">v1.0.4 • Ativo</div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <span class="stat-card-label">Usuários</span>
+      <span class="stat-card-value" id="statUsers">...</span>
+      <span class="stat-card-trend">↑ 12% este mês</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-card-label">Downloads</span>
+      <span class="stat-card-value" id="statDownloads">...</span>
+      <span class="stat-card-trend">↑ 4% hoje</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-card-label">Jogos</span>
+      <span class="stat-card-value">16</span>
+      <span class="stat-card-trend">Meta: 20</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-card-label">Sessões</span>
+      <span class="stat-card-value">1.2k</span>
+      <span class="stat-card-trend">Ativas agora</span>
+    </div>
+  </div>
+
+  <div class="admin-tabs">
+    <button class="admin-tab-btn active" onclick="switchTab('users', this)">👥 Usuários</button>
+    <button class="admin-tab-btn" onclick="switchTab('games', this)">🎮 Catálogo</button>
+    <button class="admin-tab-btn" onclick="switchTab('analytics', this)">📊 Analytics</button>
+    <button class="admin-tab-btn" onclick="switchTab('settings', this)">⚙️ Sistema</button>
+  </div>
+
+  <!-- Content Section: Users -->
+  <div id="tab-users" class="admin-tab-content">
+    <div class="section-header">
+      <span class="section-title">Gerenciar Usuários</span>
+    </div>
+    <div class="admin-table-container" id="adminUsersList">
+      <!-- Users will be injected here -->
+    </div>
+  </div>
+
+  <!-- Content Section: Games (Simulation) -->
+  <div id="tab-games" class="admin-tab-content" style="display:none;">
+    <div class="section-header">
+      <span class="section-title">Catálogo de Jogos</span>
+      <button class="btn-dl-feat" style="padding: 8px 16px; font-size: 0.8rem;">+ Novo Jogo</button>
+    </div>
+    <div class="admin-table-container" id="adminGamesList">
+      <!-- Games will be injected here -->
+    </div>
+  </div>
+
+  <!-- Content Section: Analytics -->
+  <div id="tab-analytics" class="admin-tab-content" style="display:none;">
+    <div class="section-header">
+      <span class="section-title">Engajamento Semanal</span>
+    </div>
+    <div class="chart-box">
+      <div class="chart-bars">
+        <div class="chart-bar" style="height: 40%;"></div>
+        <div class="chart-bar" style="height: 70%;"></div>
+        <div class="chart-bar" style="height: 55%;"></div>
+        <div class="chart-bar" style="height: 90%;"></div>
+        <div class="chart-bar" style="height: 30%;"></div>
+        <div class="chart-bar" style="height: 85%;"></div>
+        <div class="chart-bar" style="height: 60%;"></div>
+      </div>
+      <div style="display:flex; justify-content:space-between; color:var(--muted); font-size:0.65rem;">
+        <span>SEG</span><span>TER</span><span>QUA</span><span>QUI</span><span>SEX</span><span>SAB</span><span>DOM</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="../js/script.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    renderAdminUsers();
+    renderAdminGames();
+    updateAdminStats();
+  });
+
+  function switchTab(tabId, btn) {
+    document.querySelectorAll('.admin-tab-content').forEach(c => c.style.display = 'none');
+    document.getElementById(`tab-${tabId}`).style.display = 'block';
+    
+    document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  function updateAdminStats() {
+    const users = JSON.parse(localStorage.getItem('linkey_users') || '[]');
+    document.getElementById('statUsers').textContent = users.length;
+    
+    // Simulação de downloads acumulados
+    let totalDl = 0;
+    users.forEach(u => {
+      const userKey = `linkey_${u.email}_downloads`;
+      const dl = JSON.parse(localStorage.getItem(userKey) || '[]');
+      totalDl += dl.length;
+    });
+    document.getElementById('statDownloads').textContent = totalDl + 142; // +142 fixo pra parecer real
+  }
+
+  function renderAdminUsers() {
+    const users = JSON.parse(localStorage.getItem('linkey_users') || '[]');
+    const container = document.getElementById('adminUsersList');
+    const currentUser = JSON.parse(localStorage.getItem('linkey_user_data') || '{}');
+    
+    container.innerHTML = users.map(u => `
+      <div class="table-row">
+        <div class="header-avatar" style="background:${u.color || 'var(--bg3)'}; width:40px; height:40px; font-size:0.75rem;">
+          ${u.name.substring(0,2).toUpperCase()}
+        </div>
+        <div class="table-cell-main">
+          <div class="table-cell-name">${u.name} ${u.email === currentUser.email ? '<span style="color:var(--accent); font-size:0.7rem;">(Você)</span>' : ''}</div>
+          <div class="table-cell-sub">${u.email} • <span style="color:${u.role === 'admin' ? 'var(--accent)' : 'var(--muted)'}">${u.role === 'admin' ? '🛡️ Administrador' : '👤 Usuário'}</span></div>
+        </div>
+        <div class="table-actions">
+          ${u.email !== currentUser.email ? `
+            <button class="btn-action" title="Promover/Rebaixar" onclick="toggleRole('${u.email}')">⚡</button>
+            <button class="btn-action danger" title="Deletar" onclick="deleteUser('${u.email}')">🗑️</button>
+          ` : ''}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function renderAdminGames() {
+    const container = document.getElementById('adminGamesList');
+    // Usando os dados globais definidos no script.js
+    const games = Object.keys(GAMES_DATA);
+    
+    container.innerHTML = games.map(key => {
+      const g = GAMES_DATA[key];
+      return `
+        <div class="table-row">
+          <img src="${g.img}" style="width:50px; height:50px; border-radius:10px; object-fit:cover;">
+          <div class="table-cell-main">
+            <div class="table-cell-name">${g.name}</div>
+            <div class="table-cell-sub">${g.genre} • ⭐ ${g.rating}</div>
+          </div>
+          <div class="table-actions">
+            <button class="btn-action">✏️</button>
+            <button class="btn-action danger">👁️</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function toggleRole(email) {
+    let users = JSON.parse(localStorage.getItem('linkey_users') || '[]');
+    const idx = users.findIndex(u => u.email === email);
+    if (idx > -1) {
+      users[idx].role = users[idx].role === 'admin' ? 'user' : 'admin';
+      localStorage.setItem('linkey_users', JSON.stringify(users));
+      renderAdminUsers();
+      showToast("Cargo alterado com sucesso!");
+    }
+  }
+
+  function deleteUser(email) {
+    if (!confirm(`Tem certeza que deseja deletar o usuário ${email}?`)) return;
+    
+    let users = JSON.parse(localStorage.getItem('linkey_users') || '[]');
+    users = users.filter(u => u.email !== email);
+    localStorage.setItem('linkey_users', JSON.stringify(users));
+    renderAdminUsers();
+    updateAdminStats();
+    showToast("Usuário removido.");
+  }
+</script>
+
+</body>
+</html>

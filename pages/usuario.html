@@ -91,12 +91,11 @@
   <!-- PAINEL ADM (VISÍVEL APENAS PARA ADM) -->
   <div class="profile-section" id="admSection" style="display:none;">
     <div class="profile-section-title">🛡️ Painel de Controle (ADM)</div>
-    <div class="menu-item" style="cursor:default; flex-direction:column; align-items:flex-start; gap:10px;">
-      <div style="font-size:0.8rem; font-weight:700; color:var(--accent);">Usuários Cadastrados:</div>
-      <div id="usersList" style="width:100%; display:flex; flex-direction:column; gap:8px;">
-        <!-- Lista de usuários -->
-      </div>
-    </div>
+    <button class="menu-item" onclick="location.href='admin.html'" style="border-color: var(--accent);">
+      <span class="menu-icon">⚡</span>
+      Gerenciar Sistema (Dashboard)
+      <span class="menu-arrow">›</span>
+    </button>
   </div>
 
   <!-- MENU DE OPÇÕES -->
@@ -165,7 +164,6 @@
     const headAv = document.querySelector('.header-avatar');
     const admBadge = document.getElementById('admBadge');
     const admSection = document.getElementById('admSection');
-    const usersList = document.getElementById('usersList');
     
     const statDl = document.getElementById('statDl');
     const statFav = document.getElementById('statFav');
@@ -202,21 +200,6 @@
       if (initEl) {
         initEl.style.boxShadow = '0 0 20px var(--accent)';
         initEl.style.border = '4px solid rgba(255,255,255,0.2)';
-      }
-
-      // Renderizar todos os usuários cadastrados
-      const allUsers = JSON.parse(localStorage.getItem('linkey_users') || '[]');
-      if (usersList) {
-        usersList.innerHTML = '';
-        allUsers.forEach(u => {
-          const uItem = `
-            <div style="display:flex; justify-content:space-between; width:100%; border-bottom:1px solid var(--border); padding-bottom:5px; font-size:0.75rem;">
-              <span><strong>${u.name}</strong> (${u.role || 'user'})</span>
-              <span style="color:var(--muted);">${u.email}</span>
-            </div>
-          `;
-          usersList.innerHTML += uItem;
-        });
       }
     }
 

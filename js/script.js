@@ -453,21 +453,47 @@ function saveToUser(key, data) {
 }
 
 function loadUserData() {
-  // Mock user if none exists
-  if (!localStorage.getItem('linkey_user_data')) {
-    const mockUser = {
+  // Mock users if none exists
+  let allUsers = JSON.parse(localStorage.getItem('linkey_users') || '[]');
+  
+  const defaultUsers = [
+    {
       name: "João da Silva",
       email: "joao@exemplo.com",
+      password: "123",
       role: "user",
       color: "linear-gradient(135deg, #5b8fff, #7b5cff)"
-    };
-    localStorage.setItem('linkey_user_data', JSON.stringify(mockUser));
-    
-    // Also save to "all users" list for login simulation
-    let allUsers = JSON.parse(localStorage.getItem('linkey_users') || '[]');
-    if (!allUsers.some(u => u.email === mockUser.email)) {
-      allUsers.push({ ...mockUser, password: "123" });
-      localStorage.setItem('linkey_users', JSON.stringify(allUsers));
+    },
+    {
+      name: "Hi55Five",
+      email: "felipelissapera@gmail.com",
+      password: "fefe1234",
+      role: "admin",
+      color: "linear-gradient(135deg, #cf5bff, #9e5cff)"
     }
+  ];
+
+  // Adiciona usuários padrão que não existem ainda
+  let updated = false;
+  defaultUsers.forEach(defUser => {
+    if (!allUsers.some(u => u.email === defUser.email)) {
+      allUsers.push(defUser);
+      updated = true;
+    }
+  });
+
+  if (updated) {
+    localStorage.setItem('linkey_users', JSON.stringify(allUsers));
+  }
+
+  // Define um usuário logado inicial caso não haja nenhum (opcional, para testes)
+  if (!localStorage.getItem('linkey_user_data')) {
+    const firstUser = allUsers[0];
+    localStorage.setItem('linkey_user_data', JSON.stringify({
+      name: firstUser.name,
+      email: firstUser.email,
+      role: firstUser.role,
+      color: firstUser.color
+    }));
   }
 }
