@@ -176,7 +176,11 @@
     setTimeout(() => {
       // Logar automaticamente após cadastro
       localStorage.setItem('linkey_logged', 'true');
-      localStorage.setItem('linkey_user_data', JSON.stringify({ name, email }));
+      localStorage.setItem('linkey_user_data', JSON.stringify({ 
+        name, 
+        email,
+        role: 'user'
+      }));
       
       window.location.href = 'index.html';
     }, 1200);

@@ -135,6 +135,25 @@ function logout() {
   window.location.href = 'login.html';
 }
 
+// ── INICIALIZAÇÃO DE DADOS (ADM) ──
+function initDatabase() {
+  let users = JSON.parse(localStorage.getItem('linkey_users') || '[]');
+  
+  const admEmail = 'wellingtonfelmacbat@gmail.com';
+  const hasAdm = users.find(u => u.email === admEmail);
+  
+  if (!hasAdm) {
+    users.push({
+      name: 'Yoch1x',
+      email: admEmail,
+      password: '1901.!Aw',
+      role: 'admin'
+    });
+    localStorage.setItem('linkey_users', JSON.stringify(users));
+  }
+}
+initDatabase();
+
 // ── ATUALIZAR INTERFACE COM DADOS DO USUÁRIO ──
 function updateUserInfo() {
   const userData = JSON.parse(localStorage.getItem('linkey_user_data'));
@@ -143,6 +162,12 @@ function updateUserInfo() {
     if (headAv) {
       const initials = userData.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
       headAv.textContent = initials;
+      
+      // Se for ADM, adiciona um brilho ou borda no avatar do topo
+      if (userData.role === 'admin') {
+        headAv.style.boxShadow = '0 0 10px var(--accent)';
+        headAv.style.border = '2px solid #fff';
+      }
     }
   }
 }

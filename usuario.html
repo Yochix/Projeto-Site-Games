@@ -28,6 +28,7 @@
   <div class="profile-hero">
     <div class="profile-avatar" id="profInit">JD</div>
     <div class="profile-name" id="profName">João da Silva</div>
+    <div id="admBadge" style="display:none; background:var(--accent); color:#fff; font-size:0.65rem; font-weight:800; padding:2px 8px; border-radius:20px; margin-top:4px; text-transform:uppercase; letter-spacing:1px;">Administrador</div>
     <div class="profile-handle" id="profEmail">@joaodasilva</div>
     <div class="profile-stats">
       <div class="stat">
@@ -154,6 +155,7 @@
     const emailEl = document.getElementById('profEmail');
     const initEl = document.getElementById('profInit');
     const headAv = document.querySelector('.header-avatar');
+    const admBadge = document.getElementById('admBadge');
 
     if (nameEl) nameEl.textContent = userData.name;
     if (emailEl) emailEl.textContent = userData.email;
@@ -162,6 +164,15 @@
     const initials = userData.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
     if (initEl) initEl.textContent = initials;
     if (headAv) headAv.textContent = initials;
+
+    // Se for ADM, mostra o badge e adiciona estilo extra
+    if (userData.role === 'admin') {
+      if (admBadge) admBadge.style.display = 'block';
+      if (initEl) {
+        initEl.style.boxShadow = '0 0 20px var(--accent)';
+        initEl.style.border = '4px solid rgba(255,255,255,0.2)';
+      }
+    }
   }
 </script>
 </body>
