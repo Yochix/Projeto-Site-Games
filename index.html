@@ -25,26 +25,11 @@
 
 <div class="page-inner">
 
-  <!-- BUSCA -->
+  <!-- BUSCA (Simplificada na Home) -->
   <div class="search-wrap">
-    <div class="search-box">
+    <div class="search-box" onclick="location.href='explorar.html'" style="cursor:pointer;">
       <span class="search-icon">🔍</span>
-      <input type="search" id="search" placeholder="Buscar jogos..." autocomplete="off">
-    </div>
-  </div>
-
-  <!-- CATEGORIAS -->
-  <div class="categories-wrap">
-    <div class="categories-scroll" id="categories">
-      <button class="cat-pill active" data-cat="all">🎮 Todos</button>
-      <button class="cat-pill" data-cat="acao">⚔️ Ação</button>
-      <button class="cat-pill" data-cat="aventura">🗺️ Aventura</button>
-      <button class="cat-pill" data-cat="rpg">🧙 RPG</button>
-      <button class="cat-pill" data-cat="terror">👻 Terror</button>
-      <button class="cat-pill" data-cat="estrategia">♟️ Estratégia</button>
-      <button class="cat-pill" data-cat="corrida">🏎️ Corrida</button>
-      <button class="cat-pill" data-cat="simulacao">🚀 Simulação</button>
-      <button class="cat-pill" data-cat="casual">🧩 Casual</button>
+      <input type="text" placeholder="Buscar por jogos ou gêneros..." readonly style="pointer-events:none;">
     </div>
   </div>
 
@@ -52,7 +37,7 @@
   <div id="featured-section">
     <div class="section-header">
       <span class="section-title">🔥 Em destaque</span>
-      <a href="#" class="section-link">Ver todos</a>
+      <a href="explorar.html" class="section-link">Ver todos</a>
     </div>
     <div class="carousel-outer">
       <div class="carousel-track" id="carousel">
@@ -93,103 +78,52 @@
           </div>
         </div>
 
-        <div class="feat-card" data-name="Orbit One" onclick="location.href='jogo.html'">
-          <img src="https://images.unsplash.com/photo-1472457897821-70d3819a0e24?w=640&q=80" alt="Orbit One" loading="lazy">
-          <div class="feat-card-body">
-            <div class="feat-card-genre">Simulação · Sci-Fi</div>
-            <div class="feat-card-name">Orbit One</div>
-            <div class="feat-card-meta">
-              <div class="rating"><span class="stars">★★★★☆</span> 4.3 (5k)</div>
-              <button class="btn-dl-feat" onclick="baixar(this,event)">⬇ Baixar</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="feat-card" data-name="Dragon Run" onclick="location.href='jogo.html'">
-          <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?w=640&q=80" alt="Dragon Run" loading="lazy">
-          <div class="feat-card-body">
-            <div class="feat-card-genre">Aventura</div>
-            <div class="feat-card-name">Dragon Run: Endless Quest</div>
-            <div class="feat-card-meta">
-              <div class="rating"><span class="stars">★★★★★</span> 4.9 (31k)</div>
-              <button class="btn-dl-feat" onclick="baixar(this,event)">⬇ Baixar</button>
-            </div>
-          </div>
-        </div>
-
       </div>
       <div class="carousel-dots" id="dots">
         <div class="dot active"></div>
-        <div class="dot"></div>
-        <div class="dot"></div>
         <div class="dot"></div>
         <div class="dot"></div>
       </div>
     </div>
   </div>
 
-  <!-- GRID -->
-  <div id="grid-section">
+  <!-- NOVIDADES (HORIZONTAL) -->
+  <div class="home-section" style="margin-top: 20px;">
     <div class="section-header">
-      <span class="section-title" id="grid-title">🎮 Todos os jogos</span>
+      <span class="section-title">✨ Novidades</span>
+      <a href="explorar.html" class="section-link">Ver mais</a>
+    </div>
+    <div class="horizontal-scroll" style="display:flex; gap:12px; overflow-x:auto; padding:0 16px; scrollbar-width:none;">
+      <div class="mini-card" onclick="location.href='jogo.html'" style="flex:0 0 140px; cursor:pointer;">
+        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=300&q=70" alt="" style="width:140px; height:180px; border-radius:12px; object-fit:cover;">
+        <div class="mini-card-name" style="font-size:0.8rem; font-weight:600; margin-top:8px;">Race Fever</div>
+      </div>
+      <div class="mini-card" onclick="location.href='jogo.html'" style="flex:0 0 140px; cursor:pointer;">
+        <img src="https://images.unsplash.com/photo-1486572788966-cfd3df1f5b42?w=300&q=70" alt="" style="width:140px; height:180px; border-radius:12px; object-fit:cover;">
+        <div class="mini-card-name" style="font-size:0.8rem; font-weight:600; margin-top:8px;">Dungeon Quest</div>
+      </div>
+      <div class="mini-card" onclick="location.href='jogo.html'" style="flex:0 0 140px; cursor:pointer;">
+        <img src="https://images.unsplash.com/photo-1500462918059-b1a0cb512f1d?w=300&q=70" alt="" style="width:140px; height:180px; border-radius:12px; object-fit:cover;">
+        <div class="mini-card-name" style="font-size:0.8rem; font-weight:600; margin-top:8px;">Space Wars</div>
+      </div>
+      <div class="mini-card" onclick="location.href='jogo.html'" style="flex:0 0 140px; cursor:pointer;">
+        <img src="https://images.unsplash.com/photo-1535223289827-42f1e9919769?w=300&q=70" alt="" style="width:140px; height:180px; border-radius:12px; object-fit:cover;">
+        <div class="mini-card-name" style="font-size:0.8rem; font-weight:600; margin-top:8px;">Zombie City</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GRID: RECOMENDADOS -->
+  <div id="grid-section" style="margin-top: 20px;">
+    <div class="section-header">
+      <span class="section-title">🎮 Recomendados</span>
+      <a href="explorar.html" class="section-link">Explorar</a>
     </div>
 
     <div class="games-grid" id="grid">
-
-      <div class="game-card" data-name="Cyber Raid" data-cat="acao" onclick="location.href='jogo.html'">
-        <div class="game-card-thumb">
-          <img src="https://images.unsplash.com/photo-1535223289827-42f1e9919769?w=400&q=70" alt="">
-          <div class="game-card-overlay"></div>
-          <div class="game-card-tag">Ação</div>
-          <button class="game-card-fav" onclick="toggleFav(this,event)">🤍</button>
-        </div>
-        <div class="game-card-info">
-          <div class="game-card-name">Cyber Raid</div>
-          <div class="game-card-bottom">
-            <div class="game-card-rating"><span class="s">★</span> 4.8</div>
-            <span class="chip chip-free">Grátis</span>
-          </div>
-          <button class="btn-dl" onclick="baixar(this,event)">⬇ Baixar</button>
-        </div>
-      </div>
-
-      <div class="game-card" data-name="Shadow Keep" data-cat="terror" onclick="location.href='jogo.html'">
-        <div class="game-card-thumb">
-          <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400&q=70" alt="">
-          <div class="game-card-overlay"></div>
-          <div class="game-card-tag">Terror</div>
-          <button class="game-card-fav" onclick="toggleFav(this,event)">🤍</button>
-        </div>
-        <div class="game-card-info">
-          <div class="game-card-name">Shadow Keep</div>
-          <div class="game-card-bottom">
-            <div class="game-card-rating"><span class="s">★</span> 4.5</div>
-            <span class="chip chip-free">Grátis</span>
-          </div>
-          <button class="btn-dl" onclick="baixar(this,event)">⬇ Baixar</button>
-        </div>
-      </div>
-
-      <div class="game-card" data-name="Warlords" data-cat="estrategia" onclick="location.href='jogo.html'">
-        <div class="game-card-thumb">
-          <img src="https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?w=400&q=70" alt="">
-          <div class="game-card-overlay"></div>
-          <div class="game-card-tag">Estratégia</div>
-          <button class="game-card-fav" onclick="toggleFav(this,event)">🤍</button>
-        </div>
-        <div class="game-card-info">
-          <div class="game-card-name">Warlords</div>
-          <div class="game-card-bottom">
-            <div class="game-card-rating"><span class="s">★</span> 4.7</div>
-            <span class="chip chip-free">Grátis</span>
-          </div>
-          <button class="btn-dl" onclick="baixar(this,event)">⬇ Baixar</button>
-        </div>
-      </div>
-
       <div class="game-card" data-name="Orbit One" data-cat="simulacao" onclick="location.href='jogo.html'">
         <div class="game-card-thumb">
-          <img src="https://images.unsplash.com/photo-1472457897821-70d3819a0e24?w=400&q=70" alt="">
+          <img src="https://images.unsplash.com/photo-1472457897821-70d3819a0e24?w=400&q=70" alt="" loading="lazy">
           <div class="game-card-overlay"></div>
           <div class="game-card-tag">Simulação</div>
           <button class="game-card-fav" onclick="toggleFav(this,event)">🤍</button>
@@ -206,10 +140,10 @@
 
       <div class="game-card" data-name="Dragon Run" data-cat="aventura" onclick="location.href='jogo.html'">
         <div class="game-card-thumb">
-          <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?w=400&q=70" alt="">
+          <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?w=400&q=70" alt="" loading="lazy">
           <div class="game-card-overlay"></div>
           <div class="game-card-tag">Aventura</div>
-          <button class="game-card-fav" onclick="toggleFav(this,event)">❤️</button>
+          <button class="game-card-fav" onclick="toggleFav(this,event)">🤍</button>
         </div>
         <div class="game-card-info">
           <div class="game-card-name">Dragon Run</div>
@@ -220,142 +154,19 @@
           <button class="btn-dl" onclick="baixar(this,event)">⬇ Baixar</button>
         </div>
       </div>
-
-      <div class="game-card" data-name="Race Fever" data-cat="corrida" onclick="location.href='jogo.html'">
-        <div class="game-card-thumb">
-          <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=70" alt="">
-          <div class="game-card-overlay"></div>
-          <div class="game-card-tag">Corrida</div>
-          <button class="game-card-fav" onclick="toggleFav(this,event)">🤍</button>
-        </div>
-        <div class="game-card-info">
-          <div class="game-card-name">Race Fever</div>
-          <div class="game-card-bottom">
-            <div class="game-card-rating"><span class="s">★</span> 4.1</div>
-            <span class="chip chip-free">Grátis</span>
-          </div>
-          <button class="btn-dl" onclick="baixar(this,event)">⬇ Baixar</button>
-        </div>
-      </div>
-
-      <div class="game-card" data-name="Dungeon Quest" data-cat="rpg" onclick="location.href='jogo.html'">
-        <div class="game-card-thumb">
-          <img src="https://images.unsplash.com/photo-1486572788966-cfd3df1f5b42?w=400&q=70" alt="">
-          <div class="game-card-overlay"></div>
-          <div class="game-card-tag">RPG</div>
-          <button class="game-card-fav" onclick="toggleFav(this,event)">🤍</button>
-        </div>
-        <div class="game-card-info">
-          <div class="game-card-name">Dungeon Quest</div>
-          <div class="game-card-bottom">
-            <div class="game-card-rating"><span class="s">★</span> 4.6</div>
-            <span class="chip chip-free">Grátis</span>
-          </div>
-          <button class="btn-dl" onclick="baixar(this,event)">⬇ Baixar</button>
-        </div>
-      </div>
-
-      <div class="game-card" data-name="Space Wars" data-cat="acao" onclick="location.href='jogo.html'">
-        <div class="game-card-thumb">
-          <img src="https://images.unsplash.com/photo-1500462918059-b1a0cb512f1d?w=400&q=70" alt="">
-          <div class="game-card-overlay"></div>
-          <div class="game-card-tag">Ação</div>
-          <button class="game-card-fav" onclick="toggleFav(this,event)">🤍</button>
-        </div>
-        <div class="game-card-info">
-          <div class="game-card-name">Space Wars</div>
-          <div class="game-card-bottom">
-            <div class="game-card-rating"><span class="s">★</span> 4.4</div>
-            <span class="chip chip-free">Grátis</span>
-          </div>
-          <button class="btn-dl" onclick="baixar(this,event)">⬇ Baixar</button>
-        </div>
-      </div>
-
-      <div class="game-card" data-name="Zombie City" data-cat="terror" onclick="location.href='jogo.html'">
-        <div class="game-card-thumb">
-          <img src="https://images.unsplash.com/photo-1535223289827-42f1e9919769?w=400&q=70" alt="">
-          <div class="game-card-overlay"></div>
-          <div class="game-card-tag">Terror</div>
-          <button class="game-card-fav" onclick="toggleFav(this,event)">❤️</button>
-        </div>
-        <div class="game-card-info">
-          <div class="game-card-name">Zombie City</div>
-          <div class="game-card-bottom">
-            <div class="game-card-rating"><span class="s">★</span> 4.2</div>
-            <span class="chip chip-free">Grátis</span>
-          </div>
-          <button class="btn-dl" onclick="baixar(this,event)">⬇ Baixar</button>
-        </div>
-      </div>
-
-      <div class="game-card" data-name="Farm Heroes" data-cat="casual" onclick="location.href='jogo.html'">
-        <div class="game-card-thumb">
-          <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400&q=70" alt="">
-          <div class="game-card-overlay"></div>
-          <div class="game-card-tag">Casual</div>
-          <button class="game-card-fav" onclick="toggleFav(this,event)">🤍</button>
-        </div>
-        <div class="game-card-info">
-          <div class="game-card-name">Farm Heroes</div>
-          <div class="game-card-bottom">
-            <div class="game-card-rating"><span class="s">★</span> 4.0</div>
-            <span class="chip chip-free">Grátis</span>
-          </div>
-          <button class="btn-dl" onclick="baixar(this,event)">⬇ Baixar</button>
-        </div>
-      </div>
-
-      <div class="game-card" data-name="Moto Rush" data-cat="corrida" onclick="location.href='jogo.html'">
-        <div class="game-card-thumb">
-          <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=70" alt="">
-          <div class="game-card-overlay"></div>
-          <div class="game-card-tag">Corrida</div>
-          <button class="game-card-fav" onclick="toggleFav(this,event)">🤍</button>
-        </div>
-        <div class="game-card-info">
-          <div class="game-card-name">Moto Rush</div>
-          <div class="game-card-bottom">
-            <div class="game-card-rating"><span class="s">★</span> 4.5</div>
-            <span class="chip chip-free">Grátis</span>
-          </div>
-          <button class="btn-dl" onclick="baixar(this,event)">⬇ Baixar</button>
-        </div>
-      </div>
-
-      <div class="game-card" data-name="Kingdom Fall" data-cat="estrategia" onclick="location.href='jogo.html'">
-        <div class="game-card-thumb">
-          <img src="https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?w=400&q=70" alt="">
-          <div class="game-card-overlay"></div>
-          <div class="game-card-tag">Estratégia</div>
-          <button class="game-card-fav" onclick="toggleFav(this,event)">🤍</button>
-        </div>
-        <div class="game-card-info">
-          <div class="game-card-name">Kingdom Fall</div>
-          <div class="game-card-bottom">
-            <div class="game-card-rating"><span class="s">★</span> 4.6</div>
-            <span class="chip chip-free">Grátis</span>
-          </div>
-          <button class="btn-dl" onclick="baixar(this,event)">⬇ Baixar</button>
-        </div>
-      </div>
-
-    </div>
-
-    <div class="empty" id="empty">
-      <div class="empty-icon">🔍</div>
-      <div class="empty-title">Nenhum jogo encontrado</div>
     </div>
   </div>
-
 </div>
 
 <nav class="bottom-nav">
   <button class="nav-tab active" onclick="location.href='index.html'">
     <span class="nav-icon">🏠</span>Início
   </button>
-  <button class="nav-tab" onclick="location.href='#'">
+  <button class="nav-tab" onclick="location.href='explorar.html'">
     <span class="nav-icon">🔍</span>Explorar
+  </button>
+  <button class="nav-tab" onclick="location.href='biblioteca.html'">
+    <span class="nav-icon">🎮</span>Biblioteca
   </button>
   <button class="nav-tab" onclick="location.href='usuario.html'">
     <span class="nav-icon">👤</span>Conta

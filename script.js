@@ -370,7 +370,13 @@ const GAMES_DATA = {
   "Zombie City": { cat: "Terror", img: "https://images.unsplash.com/photo-1535223289827-42f1e9919769?w=200&q=70" },
   "Farm Heroes": { cat: "Casual", img: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=200&q=70" },
   "Moto Rush": { cat: "Corrida", img: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=200&q=70" },
-  "Kingdom Fall": { cat: "Estratégia", img: "https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?w=200&q=70" }
+  "Kingdom Fall": { cat: "Estratégia", img: "https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?w=200&q=70" },
+  "Final Strike": { cat: "FPS", img: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=200&q=70" },
+  "Street King": { cat: "Luta", img: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=200&q=70" },
+  "Goal Star": { cat: "Esportes", img: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=200&q=70" },
+  "Cyber Samurai": { cat: "Anime", img: "https://images.unsplash.com/photo-1535223289827-42f1e9919769?w=200&q=70" },
+  "Wild West": { cat: "Mundo Aberto", img: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=200&q=70" },
+  "Logic Box": { cat: "Puzzle", img: "https://images.unsplash.com/photo-1486572788966-cfd3df1f5b42?w=200&q=70" }
 };
 
 // ── ATUALIZAR INTERFACE COM DADOS DO USUÁRIO ──

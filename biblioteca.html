@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>LinKey — Biblioteca</title>
+<script>
+  if (localStorage.getItem('linkey_logged') !== 'true') {
+    window.location.href = 'login.html';
+  }
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="logo">LinKey</a>
+  <div class="header-actions">
+    <a href="usuario.html" class="header-avatar">JD</a>
+  </div>
+</header>
+
+<div class="page-inner">
+  
+  <div class="section-header" style="padding-top: 24px;">
+    <span class="section-title" style="font-size: 1.5rem;">🎮 Minha Biblioteca</span>
+  </div>
+
+  <div class="profile-section" style="padding-top: 10px;">
+    <div class="profile-section-title">⬇ Instalados</div>
+    <div class="dl-list" id="libDlList">
+      <!-- Inserido dinamicamente -->
+      <div style="text-align:center; padding:40px 20px; color:var(--muted); font-size:0.9rem;">
+        Sua biblioteca está vazia. <br>
+        <a href="explorar.html" style="color:var(--accent); font-weight:600; margin-top:10px; display:inline-block;">Explorar jogos</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="profile-section">
+    <div class="profile-section-title">❤️ Meus Favoritos</div>
+    <div class="games-grid" id="libFavGrid" style="padding: 0;">
+      <!-- Favoritos aparecem aqui como cards menores -->
+    </div>
+    <div id="favEmpty" style="text-align:center; padding:20px; color:var(--muted); font-size:0.8rem; display:none;">
+      Nenhum favorito ainda.
+    </div>
+  </div>
+
+</div>
+
+<nav class="bottom-nav">
+  <button class="nav-tab" onclick="location.href='index.html'">
+    <span class="nav-icon">🏠</span>Início
+  </button>
+  <button class="nav-tab" onclick="location.href='explorar.html'">
+    <span class="nav-icon">🔍</span>Explorar
+  </button>
+  <button class="nav-tab active" onclick="location.href='biblioteca.html'">
+    <span class="nav-icon">🎮</span>Biblioteca
+  </button>
+  <button class="nav-tab" onclick="location.href='usuario.html'">
+    <span class="nav-icon">👤</span>Conta
+  </button>
+</nav>
+
+<div class="toast" id="toast"></div>
+<script src="script.js"></script>
+<script>
+  function updateLibrary() {
+    const userDownloads = getFromUser('downloads');
+    const userFavorites = getFromUser('favorites');
+    
+    const dlList = document.getElementById('libDlList');
+    const favGrid = document.getElementById('libFavGrid');
+    const favEmpty = document.getElementById('favEmpty');
+
+    // Renderizar Downloads
+    if (dlList && userDownloads.length > 0) {
+      dlList.innerHTML = '';
+      userDownloads.forEach(gameName => {
+        const game = GAMES_DATA[gameName] || { cat: "Jogo", img: "https://via.placeholder.com/200" };
+        dlList.innerHTML += `
+          <div class="dl-item">
+            <img src="${game.img}" alt="${gameName}">
+            <div class="dl-item-info">
+              <div class="dl-item-name">${gameName}</div>
+              <div class="dl-item-cat">${game.cat}</div>
+            </div>
+            <button class="btn-dl baixado" style="width:auto; padding:6px 12px;">Abrir</button>
+          </div>
+        `;
+      });
+    }
+
+    // Renderizar Favoritos
+    if (favGrid && userFavorites.length > 0) {
+      favGrid.innerHTML = '';
+      userFavorites.forEach(gameName => {
+        const game = GAMES_DATA[gameName] || { cat: "Jogo", img: "https://via.placeholder.com/200" };
+        favGrid.innerHTML += `
+          <div class="game-card" style="animation:none;">
+            <div class="game-card-thumb" style="aspect-ratio:16/9; height:100px;">
+              <img src="${game.img}" alt="">
+              <button class="game-card-fav" onclick="toggleFav(this,event); setTimeout(updateLibrary, 100)">❤️</button>
+            </div>
+            <div class="game-card-info" style="padding:8px;">
+              <div class="game-card-name" style="font-size:0.75rem;">${gameName}</div>
+            </div>
+          </div>
+        `;
+      });
+    } else if (favEmpty) {
+      favEmpty.style.display = 'block';
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', updateLibrary);
+</script>
+</body>
+</html>
