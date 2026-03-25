@@ -38,7 +38,7 @@
           <span class="stars">★★★★★</span> 4.8 <span style="color:var(--border)">·</span> 12.4k avaliações
         </div>
       </div>
-      <button onclick="this.textContent=this.textContent.trim()==='❤️'?'🤍':'❤️'" style="background:none;border:none;font-size:1.5rem;padding:4px;cursor:pointer;margin-top:4px;">🤍</button>
+      <button onclick="toggleFav(this, event)" style="background:none;border:none;font-size:1.5rem;padding:4px;cursor:pointer;margin-top:4px;">🤍</button>
     </div>
 
     <!-- BOTÃO DE DOWNLOAD -->
@@ -165,20 +165,5 @@
 
 <div class="toast" id="toast"></div>
 <script src="script.js"></script>
-<script>
-function baixarJogo() {
-  const btn = document.getElementById('dlBtn');
-  if (btn.classList.contains('baixado')) { showToast('✅ Jogo já baixado!'); return; }
-  btn.classList.add('baixado');
-  btn.textContent = '✓ Instalado';
-  showToast('⬇ Download iniciado!');
-}
-function toggleDesc() {
-  const desc = document.getElementById('gameDesc');
-  const btn  = document.getElementById('readMore');
-  const col  = desc.classList.toggle('collapsed');
-  btn.textContent = col ? 'Ver mais ↓' : 'Ver menos ↑';
-}
-</script>
 </body>
 </html>

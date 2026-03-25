@@ -102,8 +102,30 @@ function baixar(btn, e) {
 
 // ── FAVORITOS ──
 function toggleFav(btn, e) {
-  e.stopPropagation();
+  if (e) e.stopPropagation();
   const isFav = btn.textContent.trim() === '❤️';
   btn.textContent = isFav ? '🤍' : '❤️';
   showToast(isFav ? '💔 Removido dos favoritos' : '❤️ Adicionado aos favoritos');
 }
+
+// ── PÁGINA DE JOGO (DETALHES) ──
+function baixarJogo() {
+  const btn = document.getElementById('dlBtn');
+  if (!btn) return;
+  if (btn.classList.contains('baixado')) {
+    showToast('✅ Jogo já baixado!');
+    return;
+  }
+  btn.classList.add('baixado');
+  btn.textContent = '✓ Instalado';
+  showToast('⬇ Download iniciado!');
+}
+
+function toggleDesc() {
+  const desc = document.getElementById('gameDesc');
+  const btn  = document.getElementById('readMore');
+  if (!desc || !btn) return;
+  const col  = desc.classList.toggle('collapsed');
+  btn.textContent = col ? 'Ver mais ↓' : 'Ver menos ↑';
+}
+
