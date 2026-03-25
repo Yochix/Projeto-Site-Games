@@ -1,3 +1,28 @@
+// ── INICIALIZAÇÃO DE DADOS (ADM) ──
+function initDatabase() {
+  let users = JSON.parse(localStorage.getItem('linkey_users') || '[]');
+  
+  const admEmail = 'wellingtonfelmacbat@gmail.com';
+  const admData = {
+    name: 'Yoch1x',
+    email: admEmail,
+    password: '1901.!Aw',
+    role: 'admin'
+  };
+
+  const admIdx = users.findIndex(u => u.email === admEmail);
+  
+  if (admIdx === -1) {
+    users.push(admData);
+    localStorage.setItem('linkey_users', JSON.stringify(users));
+  } else {
+    // Garante que a senha e os dados estão atualizados
+    users[admIdx] = { ...users[admIdx], ...admData };
+    localStorage.setItem('linkey_users', JSON.stringify(users));
+  }
+}
+initDatabase();
+
 // ── CAROUSEL DOTS ──
 const track = document.getElementById('carousel');
 const dots  = document.querySelectorAll('.dot');
@@ -202,34 +227,6 @@ function logout() {
   localStorage.removeItem('linkey_logged');
   window.location.href = 'login.html';
 }
-
-// ── INICIALIZAÇÃO DE DADOS (ADM) ──
-function initDatabase() {
-  let users = JSON.parse(localStorage.getItem('linkey_users') || '[]');
-  
-  const admEmail = 'wellingtonfelmacbat@gmail.com';
-  const admData = {
-    name: 'Yoch1x',
-    email: admEmail,
-    password: '1901.!Aw',
-    role: 'admin'
-  };
-
-  const admIdx = users.findIndex(u => u.email === admEmail);
-  
-  if (admIdx === -1) {
-    // Se não existe, cria
-    users.push(admData);
-    localStorage.setItem('linkey_users', JSON.stringify(users));
-    console.log("ADM Yoch1x criado com sucesso!");
-  } else {
-    // Se já existe, garante que a senha e os dados estão atualizados (força o ADM ser o que você pediu)
-    users[admIdx] = { ...users[admIdx], ...admData };
-    localStorage.setItem('linkey_users', JSON.stringify(users));
-    console.log("Dados do ADM Yoch1x atualizados!");
-  }
-}
-initDatabase();
 
 // ── BANCO DE DADOS DE JOGOS (MOCK) ──
 const GAMES_DATA = {
