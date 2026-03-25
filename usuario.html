@@ -32,15 +32,15 @@
     <div class="profile-handle" id="profEmail">@joaodasilva</div>
     <div class="profile-stats">
       <div class="stat">
-        <span class="stat-value">12</span>
+        <span class="stat-value" id="statDl">0</span>
         <span class="stat-label">Baixados</span>
       </div>
       <div class="stat">
-        <span class="stat-value">7</span>
+        <span class="stat-value" id="statFav">0</span>
         <span class="stat-label">Favoritos</span>
       </div>
       <div class="stat">
-        <span class="stat-value">3</span>
+        <span class="stat-value">0</span>
         <span class="stat-label">Reviews</span>
       </div>
     </div>
@@ -50,44 +50,22 @@
   <!-- JOGOS BAIXADOS -->
   <div class="profile-section">
     <div class="profile-section-title">⬇ Jogos baixados</div>
-    <div class="dl-list">
+    <div class="dl-list" id="userDlList">
+      <!-- Inserido dinamicamente -->
+      <div style="text-align:center; padding:20px; color:var(--muted); font-size:0.8rem;">
+        Você ainda não baixou nenhum jogo.
+      </div>
+    </div>
+  </div>
 
-      <a href="jogo.html" class="dl-item">
-        <img src="https://images.unsplash.com/photo-1535223289827-42f1e9919769?w=200&q=70" alt="">
-        <div class="dl-item-info">
-          <div class="dl-item-name">Cyber Raid</div>
-          <div class="dl-item-cat">Ação · RPG</div>
-        </div>
-        <span class="dl-item-badge">✓ Instalado</span>
-      </a>
-
-      <a href="jogo.html" class="dl-item">
-        <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?w=200&q=70" alt="">
-        <div class="dl-item-info">
-          <div class="dl-item-name">Dragon Run</div>
-          <div class="dl-item-cat">Aventura</div>
-        </div>
-        <span class="dl-item-badge">✓ Instalado</span>
-      </a>
-
-      <a href="jogo.html" class="dl-item">
-        <img src="https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?w=200&q=70" alt="">
-        <div class="dl-item-info">
-          <div class="dl-item-name">Warlords</div>
-          <div class="dl-item-cat">Estratégia</div>
-        </div>
-        <span class="dl-item-badge">✓ Instalado</span>
-      </a>
-
-      <a href="jogo.html" class="dl-item">
-        <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=200&q=70" alt="">
-        <div class="dl-item-info">
-          <div class="dl-item-name">Shadow Keep</div>
-          <div class="dl-item-cat">Terror · Survival</div>
-        </div>
-        <span class="dl-item-badge">✓ Instalado</span>
-      </a>
-
+  <!-- PAINEL ADM (VISÍVEL APENAS PARA ADM) -->
+  <div class="profile-section" id="admSection" style="display:none;">
+    <div class="profile-section-title">🛡️ Painel de Controle (ADM)</div>
+    <div class="menu-item" style="cursor:default; flex-direction:column; align-items:flex-start; gap:10px;">
+      <div style="font-size:0.8rem; font-weight:700; color:var(--accent);">Usuários Cadastrados:</div>
+      <div id="usersList" style="width:100%; display:flex; flex-direction:column; gap:8px;">
+        <!-- Lista de usuários -->
+      </div>
     </div>
   </div>
 
@@ -156,6 +134,12 @@
     const initEl = document.getElementById('profInit');
     const headAv = document.querySelector('.header-avatar');
     const admBadge = document.getElementById('admBadge');
+    const admSection = document.getElementById('admSection');
+    const usersList = document.getElementById('usersList');
+    
+    const statDl = document.getElementById('statDl');
+    const statFav = document.getElementById('statFav');
+    const dlList = document.getElementById('userDlList');
 
     if (nameEl) nameEl.textContent = userData.name;
     if (emailEl) emailEl.textContent = userData.email;
@@ -165,13 +149,55 @@
     if (initEl) initEl.textContent = initials;
     if (headAv) headAv.textContent = initials;
 
-    // Se for ADM, mostra o badge e adiciona estilo extra
+    // Se for ADM, mostra o badge, painel e lista de usuários
     if (userData.role === 'admin') {
       if (admBadge) admBadge.style.display = 'block';
+      if (admSection) admSection.style.display = 'block';
       if (initEl) {
         initEl.style.boxShadow = '0 0 20px var(--accent)';
         initEl.style.border = '4px solid rgba(255,255,255,0.2)';
       }
+
+      // Renderizar todos os usuários cadastrados
+      const allUsers = JSON.parse(localStorage.getItem('linkey_users') || '[]');
+      if (usersList) {
+        usersList.innerHTML = '';
+        allUsers.forEach(u => {
+          const uItem = `
+            <div style="display:flex; justify-content:space-between; width:100%; border-bottom:1px solid var(--border); padding-bottom:5px; font-size:0.75rem;">
+              <span><strong>${u.name}</strong> (${u.role || 'user'})</span>
+              <span style="color:var(--muted);">${u.email}</span>
+            </div>
+          `;
+          usersList.innerHTML += uItem;
+        });
+      }
+    }
+
+    // Carregar estatísticas e lista de downloads do banco local
+    const userDownloads = getFromUser('downloads');
+    const userFavorites = getFromUser('favorites');
+
+    if (statDl) statDl.textContent = userDownloads.length;
+    if (statFav) statFav.textContent = userFavorites.length;
+
+    // Renderizar lista de downloads
+    if (dlList && userDownloads.length > 0) {
+      dlList.innerHTML = ''; // Limpa o "vazio"
+      userDownloads.forEach(gameName => {
+        const game = GAMES_DATA[gameName] || { cat: "Jogo", img: "https://via.placeholder.com/200" };
+        const item = `
+          <a href="jogo.html" class="dl-item">
+            <img src="${game.img}" alt="${gameName}">
+            <div class="dl-item-info">
+              <div class="dl-item-name">${gameName}</div>
+              <div class="dl-item-cat">${game.cat}</div>
+            </div>
+            <span class="dl-item-badge">✓ Instalado</span>
+          </a>
+        `;
+        dlList.innerHTML += item;
+      });
     }
   }
 </script>

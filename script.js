@@ -89,23 +89,47 @@ function showToast(msg) {
 
 // ── DOWNLOAD ──
 function baixar(btn, e) {
-  e.stopPropagation();
+  if (e) e.stopPropagation();
   const jaBaixado = btn.classList.contains('baixado');
   if (jaBaixado) {
     showToast('✅ Jogo já baixado!');
     return;
   }
+  
+  // Pegar nome do jogo do card
+  const card = btn.closest('.game-card') || btn.closest('.feat-card');
+  const gameName = card ? (card.dataset.name || card.querySelector('.feat-card-name')?.textContent) : 'Jogo';
+
   btn.classList.add('baixado');
   btn.textContent = '✓ Baixado';
-  showToast('⬇ Download iniciado!');
+  showToast(`⬇ Download de "${gameName}" iniciado!`);
+  
+  saveToUser('downloads', gameName);
 }
 
 // ── FAVORITOS ──
 function toggleFav(btn, e) {
   if (e) e.stopPropagation();
   const isFav = btn.textContent.trim() === '❤️';
+  
+  // Pegar nome do jogo
+  const card = btn.closest('.game-card') || btn.closest('.feat-card') || document.querySelector('.game-info');
+  let gameName = 'Jogo';
+  if (card) {
+    gameName = card.dataset.name || 
+               card.querySelector('.feat-card-name')?.textContent || 
+               card.querySelector('.game-page-title')?.textContent || 
+               'Jogo';
+  }
+
   btn.textContent = isFav ? '🤍' : '❤️';
-  showToast(isFav ? '💔 Removido dos favoritos' : '❤️ Adicionado aos favoritos');
+  showToast(isFav ? `💔 "${gameName}" removido dos favoritos` : `❤️ "${gameName}" adicionado aos favoritos`);
+  
+  if (isFav) {
+    removeFromUser('favorites', gameName);
+  } else {
+    saveToUser('favorites', gameName);
+  }
 }
 
 // ── PÁGINA DE JOGO (DETALHES) ──
@@ -116,9 +140,53 @@ function baixarJogo() {
     showToast('✅ Jogo já baixado!');
     return;
   }
+  
+  const gameName = document.querySelector('.game-page-title')?.textContent || 'Jogo';
+
   btn.classList.add('baixado');
   btn.textContent = '✓ Instalado';
-  showToast('⬇ Download iniciado!');
+  showToast(`⬇ Download de "${gameName}" iniciado!`);
+  
+  saveToUser('downloads', gameName);
+}
+
+// ── PERSISTÊNCIA NO LOCALSTORAGE ──
+function saveToUser(key, value) {
+  const userData = JSON.parse(localStorage.getItem('linkey_user_data'));
+  if (!userData) return;
+
+  let users = JSON.parse(localStorage.getItem('linkey_users') || '[]');
+  const userIdx = users.findIndex(u => u.email === userData.email);
+  
+  if (userIdx !== -1) {
+    if (!users[userIdx][key]) users[userIdx][key] = [];
+    if (!users[userIdx][key].includes(value)) {
+      users[userIdx][key].push(value);
+      localStorage.setItem('linkey_users', JSON.stringify(users));
+    }
+  }
+}
+
+function removeFromUser(key, value) {
+  const userData = JSON.parse(localStorage.getItem('linkey_user_data'));
+  if (!userData) return;
+
+  let users = JSON.parse(localStorage.getItem('linkey_users') || '[]');
+  const userIdx = users.findIndex(u => u.email === userData.email);
+  
+  if (userIdx !== -1 && users[userIdx][key]) {
+    users[userIdx][key] = users[userIdx][key].filter(item => item !== value);
+    localStorage.setItem('linkey_users', JSON.stringify(users));
+  }
+}
+
+function getFromUser(key) {
+  const userData = JSON.parse(localStorage.getItem('linkey_user_data'));
+  if (!userData) return [];
+
+  const users = JSON.parse(localStorage.getItem('linkey_users') || '[]');
+  const user = users.find(u => u.email === userData.email);
+  return user ? (user[key] || []) : [];
 }
 
 function toggleDesc() {
@@ -140,19 +208,44 @@ function initDatabase() {
   let users = JSON.parse(localStorage.getItem('linkey_users') || '[]');
   
   const admEmail = 'wellingtonfelmacbat@gmail.com';
-  const hasAdm = users.find(u => u.email === admEmail);
+  const admData = {
+    name: 'Yoch1x',
+    email: admEmail,
+    password: '1901.!Aw',
+    role: 'admin'
+  };
+
+  const admIdx = users.findIndex(u => u.email === admEmail);
   
-  if (!hasAdm) {
-    users.push({
-      name: 'Yoch1x',
-      email: admEmail,
-      password: '1901.!Aw',
-      role: 'admin'
-    });
+  if (admIdx === -1) {
+    // Se não existe, cria
+    users.push(admData);
     localStorage.setItem('linkey_users', JSON.stringify(users));
+    console.log("ADM Yoch1x criado com sucesso!");
+  } else {
+    // Se já existe, garante que a senha e os dados estão atualizados (força o ADM ser o que você pediu)
+    users[admIdx] = { ...users[admIdx], ...admData };
+    localStorage.setItem('linkey_users', JSON.stringify(users));
+    console.log("Dados do ADM Yoch1x atualizados!");
   }
 }
 initDatabase();
+
+// ── BANCO DE DADOS DE JOGOS (MOCK) ──
+const GAMES_DATA = {
+  "Cyber Raid": { cat: "Ação · RPG", img: "https://images.unsplash.com/photo-1535223289827-42f1e9919769?w=200&q=70" },
+  "Shadow Keep": { cat: "Terror · Survival", img: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=200&q=70" },
+  "Warlords": { cat: "Estratégia", img: "https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?w=200&q=70" },
+  "Orbit One": { cat: "Simulação", img: "https://images.unsplash.com/photo-1472457897821-70d3819a0e24?w=200&q=70" },
+  "Dragon Run": { cat: "Aventura", img: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=200&q=70" },
+  "Race Fever": { cat: "Corrida", img: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=200&q=70" },
+  "Dungeon Quest": { cat: "RPG", img: "https://images.unsplash.com/photo-1486572788966-cfd3df1f5b42?w=200&q=70" },
+  "Space Wars": { cat: "Ação", img: "https://images.unsplash.com/photo-1500462918059-b1a0cb512f1d?w=200&q=70" },
+  "Zombie City": { cat: "Terror", img: "https://images.unsplash.com/photo-1535223289827-42f1e9919769?w=200&q=70" },
+  "Farm Heroes": { cat: "Casual", img: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=200&q=70" },
+  "Moto Rush": { cat: "Corrida", img: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=200&q=70" },
+  "Kingdom Fall": { cat: "Estratégia", img: "https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?w=200&q=70" }
+};
 
 // ── ATUALIZAR INTERFACE COM DADOS DO USUÁRIO ──
 function updateUserInfo() {
@@ -169,6 +262,34 @@ function updateUserInfo() {
         headAv.style.border = '2px solid #fff';
       }
     }
+
+    // Atualizar estados dos botões (favoritos e downloads)
+    const userFavorites = getFromUser('favorites');
+    const userDownloads = getFromUser('downloads');
+
+    // Atualizar corações
+    document.querySelectorAll('.game-card-fav').forEach(btn => {
+      const card = btn.closest('.game-card');
+      const gameName = card?.dataset.name;
+      if (gameName && userFavorites.includes(gameName)) {
+        btn.textContent = '❤️';
+      }
+    });
+
+    // Atualizar botões de download
+    document.querySelectorAll('.btn-dl, .btn-dl-feat, .btn-dl-page').forEach(btn => {
+      const card = btn.closest('.game-card') || btn.closest('.feat-card');
+      let gameName = card ? (card.dataset.name || card.querySelector('.feat-card-name')?.textContent) : null;
+      
+      if (!gameName && btn.classList.contains('btn-dl-page')) {
+        gameName = document.querySelector('.game-page-title')?.textContent;
+      }
+
+      if (gameName && userDownloads.includes(gameName)) {
+        btn.classList.add('baixado');
+        btn.textContent = btn.classList.contains('btn-dl-page') ? '✓ Instalado' : '✓ Baixado';
+      }
+    });
   }
 }
 
