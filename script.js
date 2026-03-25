@@ -135,3 +135,19 @@ function logout() {
   window.location.href = 'login.html';
 }
 
+// ── ATUALIZAR INTERFACE COM DADOS DO USUÁRIO ──
+function updateUserInfo() {
+  const userData = JSON.parse(localStorage.getItem('linkey_user_data'));
+  if (userData) {
+    const headAv = document.querySelector('.header-avatar');
+    if (headAv) {
+      const initials = userData.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+      headAv.textContent = initials;
+    }
+  }
+}
+
+// Executar ao carregar qualquer página
+document.addEventListener('DOMContentLoaded', updateUserInfo);
+
+

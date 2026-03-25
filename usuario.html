@@ -26,9 +26,9 @@
 
   <!-- HERO DO PERFIL -->
   <div class="profile-hero">
-    <div class="profile-avatar">JD</div>
-    <div class="profile-name">João da Silva</div>
-    <div class="profile-handle">@joaodasilva</div>
+    <div class="profile-avatar" id="profInit">JD</div>
+    <div class="profile-name" id="profName">João da Silva</div>
+    <div class="profile-handle" id="profEmail">@joaodasilva</div>
     <div class="profile-stats">
       <div class="stat">
         <span class="stat-value">12</span>
@@ -146,5 +146,23 @@
 
 <div class="toast" id="toast"></div>
 <script src="script.js"></script>
+<script>
+  // Carregar dados reais do usuário logado
+  const userData = JSON.parse(localStorage.getItem('linkey_user_data'));
+  if (userData) {
+    const nameEl = document.getElementById('profName');
+    const emailEl = document.getElementById('profEmail');
+    const initEl = document.getElementById('profInit');
+    const headAv = document.querySelector('.header-avatar');
+
+    if (nameEl) nameEl.textContent = userData.name;
+    if (emailEl) emailEl.textContent = userData.email;
+    
+    // Iniciais do nome
+    const initials = userData.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+    if (initEl) initEl.textContent = initials;
+    if (headAv) headAv.textContent = initials;
+  }
+</script>
 </body>
 </html>

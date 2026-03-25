@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>LinKey — Entrar</title>
+<title>LinKey — Criar Conta</title>
 <script>
   // Se já estiver logado, vai direto para a loja
   if (localStorage.getItem('linkey_logged') === 'true') {
@@ -34,7 +34,7 @@
   }
   .login-header {
     text-align: center;
-    margin-bottom: 32px;
+    margin-bottom: 24px;
   }
   .login-logo {
     font-family: 'Syne', sans-serif;
@@ -51,7 +51,7 @@
     font-size: 0.9rem;
   }
   .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 16px;
   }
   .form-group label {
     display: block;
@@ -100,6 +100,12 @@
     color: var(--accent);
     font-weight: 500;
   }
+  .error-msg {
+    color: #f87171;
+    font-size: 0.8rem;
+    margin-top: 4px;
+    display: none;
+  }
 </style>
 </head>
 <body>
@@ -108,69 +114,72 @@
   <div class="login-card">
     <div class="login-header">
       <a href="index.html" class="login-logo">LinKey</a>
-      <p class="login-subtitle">Entre na sua conta para continuar</p>
+      <p class="login-subtitle">Crie sua conta e comece a jogar</p>
     </div>
 
-    <form id="loginForm">
+    <form id="registerForm">
       <div class="form-group">
-        <label for="email">E-mail ou Usuário</label>
-        <input type="text" id="email" class="form-input" placeholder="seu@email.com" required>
+        <label for="name">Nome Completo</label>
+        <input type="text" id="name" class="form-input" placeholder="Seu nome" required>
+      </div>
+
+      <div class="form-group">
+        <label for="email">E-mail</label>
+        <input type="email" id="email" class="form-input" placeholder="seu@email.com" required>
+        <div id="emailError" class="error-msg">Este e-mail já está cadastrado.</div>
       </div>
       
       <div class="form-group">
         <label for="password">Senha</label>
-        <input type="password" id="password" class="form-input" placeholder="••••••••" required>
+        <input type="password" id="password" class="form-input" placeholder="••••••••" minlength="6" required>
       </div>
 
-      <button type="submit" class="btn-login-submit" id="loginBtn">Entrar</button>
+      <button type="submit" class="btn-login-submit" id="regBtn">Criar conta</button>
     </form>
 
-    <div id="loginError" class="error-msg" style="color: #f87171; font-size: 0.8rem; margin-top: 10px; text-align: center; display: none;">E-mail ou senha incorretos.</div>
-
     <div class="login-footer">
-      Não tem uma conta? <a href="cadastro.html">Criar agora</a>
+      Já tem uma conta? <a href="login.html">Fazer login</a>
     </div>
   </div>
-  
-  <a href="index.html" style="margin-top: 24px; color: var(--muted); font-size: 0.85rem;">← Voltar para a loja</a>
 </div>
 
+<div class="toast" id="toast"></div>
+
+<script src="script.js"></script>
 <script>
-  // Ao enviar o formulário, simula o login salvando no navegador
-  document.getElementById('loginForm').addEventListener('submit', (e) => {
+  document.getElementById('registerForm').addEventListener('submit', (e) => {
     e.preventDefault();
     
+    const name = document.getElementById('name').value;
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
-    const btn = document.getElementById('loginBtn');
-    const loginError = document.getElementById('loginError');
+    const btn = document.getElementById('regBtn');
+    const emailError = document.getElementById('emailError');
 
-    // "BANCO DE DADOS": Pegar usuários existentes
-    const users = JSON.parse(localStorage.getItem('linkey_users') || '[]');
+    // "BANCO DE DADOS": Pegar usuários existentes ou criar array vazio
+    let users = JSON.parse(localStorage.getItem('linkey_users') || '[]');
 
-    // Verificar se e-mail e senha batem
-    const userFound = users.find(u => u.email === email && u.password === password);
-
-    if (!userFound) {
-      loginError.style.display = 'block';
+    // Verificar se e-mail já existe
+    if (users.find(u => u.email === email)) {
+      emailError.style.display = 'block';
       return;
     }
-    loginError.style.display = 'none';
+    emailError.style.display = 'none';
 
-    btn.textContent = 'Entrando...';
-    btn.style.opacity = '0.7';
+    btn.textContent = 'Criando...';
     btn.disabled = true;
 
+    // Salvar novo usuário
+    users.push({ name, email, password });
+    localStorage.setItem('linkey_users', JSON.stringify(users));
+
     setTimeout(() => {
-      // Salvar estado de login e dados do usuário logado
+      // Logar automaticamente após cadastro
       localStorage.setItem('linkey_logged', 'true');
-      localStorage.setItem('linkey_user_data', JSON.stringify({ 
-        name: userFound.name, 
-        email: userFound.email 
-      }));
+      localStorage.setItem('linkey_user_data', JSON.stringify({ name, email }));
       
       window.location.href = 'index.html';
-    }, 800);
+    }, 1200);
   });
 </script>
 
