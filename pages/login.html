@@ -7,12 +7,12 @@
 <script>
   // Se já estiver logado, vai direto para a loja
   if (localStorage.getItem('linkey_logged') === 'true') {
-    window.location.href = 'index.html';
+    window.location.href = '../index.html';
   }
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&display=swap">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="../css/style.css">
 <style>
   .login-container {
     min-height: 100vh;
@@ -136,7 +136,7 @@
 </div>
 
 <div class="toast" id="toast"></div>
-<script src="script.js"></script>
+<script src="../js/script.js"></script>
 <script>
   // Ao enviar o formulário, simula o login salvando no navegador
   document.getElementById('loginForm').addEventListener('submit', (e) => {
@@ -172,7 +172,7 @@
         role: userFound.role || 'user'
       }));
       
-      window.location.href = 'index.html';
+      window.location.href = '../index.html';
     }, 800);
   });
 </script>

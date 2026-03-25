@@ -28,20 +28,18 @@ const track = document.getElementById('carousel');
 const dots  = document.querySelectorAll('.dot');
 const featCards = track ? track.querySelectorAll('.feat-card') : [];
 
-if (track) {
-  track.addEventListener('scroll', () => {
-    const idx = Math.round(track.scrollLeft / (track.offsetWidth - 32));
-    const clamped = Math.max(0, Math.min(idx, dots.length - 1));
-    dots.forEach((d, i) => d.classList.toggle('active', i === clamped));
-  }, { passive: true });
-
+if (track && dots.length > 0) {
   // auto-play
   let autoIdx = 0;
   setInterval(() => {
     if (!featCards.length) return;
     autoIdx = (autoIdx + 1) % featCards.length;
-    const cardW = featCards[0].offsetWidth + 12;
+    
+    const cardW = featCards[0].offsetWidth + 16; // Card + gap
     track.scrollTo({ left: autoIdx * cardW, behavior: 'smooth' });
+    
+    // Atualizar dots
+    dots.forEach((d, i) => d.classList.toggle('active', i === autoIdx));
   }, 4000);
 }
 
@@ -225,7 +223,12 @@ function toggleDesc() {
 // ── LOGOUT ──
 function logout() {
   localStorage.removeItem('linkey_logged');
-  window.location.href = 'login.html';
+  // Se estiver em uma página dentro de /pages, volta um nível
+  if (window.location.pathname.includes('/pages/')) {
+    window.location.href = 'login.html';
+  } else {
+    window.location.href = 'pages/login.html';
+  }
 }
 
 // ── EDITAR PERFIL ──
@@ -357,7 +360,7 @@ function saveProfile() {
   }
 }
 
-// ── INICIALIZAÇÃO DE DADOS (ADM) ──JOGOS (MOCK) ──
+// ── BANCO DE DADOS DE JOGOS (MOCK) ──
 const GAMES_DATA = {
   "Cyber Raid": { cat: "Ação · RPG", img: "https://images.unsplash.com/photo-1535223289827-42f1e9919769?w=200&q=70" },
   "Shadow Keep": { cat: "Terror · Survival", img: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=200&q=70" },
@@ -385,23 +388,17 @@ function updateUserInfo() {
   if (userData) {
     const headAv = document.querySelector('.header-avatar');
     if (headAv) {
-      // Se tiver foto, mostra a imagem. Se não, mostra iniciais.
       if (userData.profilePic) {
-        headAv.innerHTML = `<img src="${userData.profilePic}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+        headAv.innerHTML = `<img src="${userData.profilePic}" alt="Avatar">`;
       } else {
         const initials = userData.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
         headAv.textContent = initials;
-        
-        // Aplica cor personalizada se existir
-        if (userData.color) {
-          headAv.style.background = userData.color;
-        }
+        if (userData.color) headAv.style.background = userData.color;
       }
       
-      // Se for ADM, adiciona um brilho ou borda no avatar do topo
       if (userData.role === 'admin') {
         headAv.style.boxShadow = '0 0 10px var(--accent)';
-        headAv.style.border = '2px solid #fff';
+        headAv.style.borderColor = 'rgba(255,255,255,0.4)';
       }
     }
 
@@ -437,5 +434,3 @@ function updateUserInfo() {
 
 // Executar ao carregar qualquer página
 document.addEventListener('DOMContentLoaded', updateUserInfo);
-
-
