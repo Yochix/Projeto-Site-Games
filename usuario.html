@@ -44,7 +44,48 @@
         <span class="stat-label">Reviews</span>
       </div>
     </div>
-    <button class="btn-edit">✏️ Editar perfil</button>
+    <button class="btn-edit" onclick="openEditModal()">✏️ Editar perfil</button>
+  </div>
+
+  <!-- MODAL EDITAR PERFIL -->
+  <div class="modal" id="editModal">
+    <div class="modal-content">
+      <div class="modal-title">Editar Perfil</div>
+      
+      <div class="form-group">
+        <label>Seu Nome</label>
+        <input type="text" id="editName" class="form-input">
+      </div>
+
+      <div class="form-group">
+        <label>Foto de Perfil</label>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <input type="text" id="editPic" class="form-input" placeholder="https://exemplo.com/foto.jpg">
+          <div style="text-align:center; color:var(--muted); font-size:0.75rem;">ou</div>
+          <label for="filePic" class="btn-edit" style="display:flex; align-items:center; justify-content:center; gap:8px; margin:0; cursor:pointer;">
+            📁 Escolher do Dispositivo
+          </label>
+          <input type="file" id="filePic" accept="image/*" style="display:none;" onchange="handleFileSelect(this)">
+          <div id="fileNameDisplay" style="font-size:0.7rem; color:var(--accent); text-align:center; display:none;"></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Cor do Perfil (Se não tiver foto)</label>
+        <div class="avatar-picker" id="colorPicker">
+          <div class="color-opt active" data-color="linear-gradient(135deg, #5b8fff, #7b5cff)" style="background: linear-gradient(135deg, #5b8fff, #7b5cff)"></div>
+          <div class="color-opt" data-color="linear-gradient(135deg, #ff5b8f, #ff7b5c)" style="background: linear-gradient(135deg, #ff5b8f, #ff7b5c)"></div>
+          <div class="color-opt" data-color="linear-gradient(135deg, #5bff8f, #5cff7b)" style="background: linear-gradient(135deg, #5bff8f, #5cff7b)"></div>
+          <div class="color-opt" data-color="linear-gradient(135deg, #ffcf5b, #ff9e5c)" style="background: linear-gradient(135deg, #ffcf5b, #ff9e5c)"></div>
+          <div class="color-opt" data-color="linear-gradient(135deg, #cf5bff, #9e5cff)" style="background: linear-gradient(135deg, #cf5bff, #9e5cff)"></div>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:10px; margin-top:20px;">
+        <button class="btn-edit" style="flex:1; background:var(--bg3);" onclick="closeEditModal()">Cancelar</button>
+        <button class="btn-dl-page" style="flex:1; margin:0; padding:10px;" onclick="saveProfile()">Salvar</button>
+      </div>
+    </div>
   </div>
 
   <!-- JOGOS BAIXADOS -->
@@ -144,10 +185,21 @@
     if (nameEl) nameEl.textContent = userData.name;
     if (emailEl) emailEl.textContent = userData.email;
     
-    // Iniciais do nome
-    const initials = userData.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
-    if (initEl) initEl.textContent = initials;
-    if (headAv) headAv.textContent = initials;
+    // Foto de perfil ou iniciais
+    if (userData.profilePic) {
+      if (initEl) initEl.innerHTML = `<img src="${userData.profilePic}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+      if (headAv) headAv.innerHTML = `<img src="${userData.profilePic}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+    } else {
+      const initials = userData.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+      if (initEl) initEl.textContent = initials;
+      if (headAv) headAv.textContent = initials;
+
+      // Aplica cor personalizada do avatar se não tiver foto
+      if (userData.color) {
+        if (initEl) initEl.style.background = userData.color;
+        if (headAv) headAv.style.background = userData.color;
+      }
+    }
 
     // Se for ADM, mostra o badge, painel e lista de usuários
     if (userData.role === 'admin') {

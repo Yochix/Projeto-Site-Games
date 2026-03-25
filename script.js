@@ -228,7 +228,136 @@ function logout() {
   window.location.href = 'login.html';
 }
 
-// ── BANCO DE DADOS DE JOGOS (MOCK) ──
+// ── EDITAR PERFIL ──
+function openEditModal() {
+  const userData = JSON.parse(localStorage.getItem('linkey_user_data'));
+  if (!userData) return;
+  
+  selectedFileData = null; // Reseta qualquer arquivo selecionado anteriormente
+  const modal = document.getElementById('editModal');
+  const inputName = document.getElementById('editName');
+  const inputPic  = document.getElementById('editPic');
+  
+  if (modal && inputName) {
+    inputName.value = userData.name;
+    if (inputPic) inputPic.value = userData.profilePic || '';
+    modal.classList.add('show');
+    
+    // Marcar cor atual no picker
+    const currentColor = userData.color || 'linear-gradient(135deg, #5b8fff, #7b5cff)';
+    document.querySelectorAll('.color-opt').forEach(opt => {
+      opt.classList.toggle('active', opt.dataset.color === currentColor);
+    });
+  }
+}
+
+function closeEditModal() {
+  const modal = document.getElementById('editModal');
+  if (modal) {
+    modal.classList.remove('show');
+    // Limpar o input de arquivo e o nome do arquivo ao fechar
+    const fileInput = document.getElementById('filePic');
+    const nameDisplay = document.getElementById('fileNameDisplay');
+    if (fileInput) fileInput.value = '';
+    if (nameDisplay) {
+      nameDisplay.textContent = '';
+      nameDisplay.style.display = 'none';
+    }
+  }
+}
+
+// Lógica do Color Picker
+document.addEventListener('click', (e) => {
+  if (e.target.classList.contains('color-opt')) {
+    document.querySelectorAll('.color-opt').forEach(opt => opt.classList.remove('active'));
+    e.target.classList.add('active');
+  }
+});
+
+let selectedFileData = null;
+
+function handleFileSelect(input) {
+  const file = input.files[0];
+  const nameDisplay = document.getElementById('fileNameDisplay');
+  
+  if (file) {
+    if (file.size > 2 * 1024 * 1024) { // Limite de 2MB para localStorage
+      showToast('❌ Imagem muito grande! Use uma de até 2MB');
+      input.value = '';
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      selectedFileData = e.target.result; // Base64 da imagem
+      if (nameDisplay) {
+        nameDisplay.textContent = `✅ ${file.name} selecionado`;
+        nameDisplay.style.display = 'block';
+      }
+      // Limpa o campo de URL se escolher um arquivo
+      const inputPic = document.getElementById('editPic');
+      if (inputPic) inputPic.value = '';
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
+function saveProfile() {
+  const newName = document.getElementById('editName').value.trim();
+  let newPic = document.getElementById('editPic')?.value.trim();
+  const activeColor = document.querySelector('.color-opt.active')?.dataset.color;
+  
+  // Se houver um arquivo selecionado, ele tem prioridade sobre a URL
+  if (selectedFileData) {
+    newPic = selectedFileData;
+  }
+
+  if (!newName) {
+    showToast('❌ O nome não pode estar vazio');
+    return;
+  }
+
+  const userData = JSON.parse(localStorage.getItem('linkey_user_data'));
+  let users = JSON.parse(localStorage.getItem('linkey_users') || '[]');
+  const userIdx = users.findIndex(u => u.email === userData.email);
+
+  if (userIdx !== -1) {
+    // Atualiza no "Banco de Dados"
+    users[userIdx].name = newName;
+    users[userIdx].profilePic = newPic;
+    users[userIdx].color = activeColor;
+    localStorage.setItem('linkey_users', JSON.stringify(users));
+
+    // Atualiza na sessão atual
+    userData.name = newName;
+    userData.profilePic = newPic;
+    userData.color = activeColor;
+    localStorage.setItem('linkey_user_data', JSON.stringify(userData));
+
+    showToast('✅ Perfil atualizado com sucesso!');
+    closeEditModal();
+    selectedFileData = null; // Reseta após salvar
+    
+    // Recarrega os dados na tela
+    if (typeof updateUserInfo === 'function') updateUserInfo();
+    
+    // Se estiver na página de perfil, atualiza os elementos específicos dela
+    const profName = document.getElementById('profName');
+    const profInit = document.getElementById('profInit');
+    if (profName) profName.textContent = newName;
+    if (profInit) {
+      if (newPic) {
+        profInit.innerHTML = `<img src="${newPic}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+      } else {
+        profInit.innerHTML = ''; // Limpa se for só cor
+        profInit.textContent = newName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+        profInit.style.background = activeColor;
+      }
+    }
+  }
+}
+
+// ── INICIALIZAÇÃO DE DADOS (ADM) ──JOGOS (MOCK) ──
 const GAMES_DATA = {
   "Cyber Raid": { cat: "Ação · RPG", img: "https://images.unsplash.com/photo-1535223289827-42f1e9919769?w=200&q=70" },
   "Shadow Keep": { cat: "Terror · Survival", img: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=200&q=70" },
@@ -250,8 +379,18 @@ function updateUserInfo() {
   if (userData) {
     const headAv = document.querySelector('.header-avatar');
     if (headAv) {
-      const initials = userData.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
-      headAv.textContent = initials;
+      // Se tiver foto, mostra a imagem. Se não, mostra iniciais.
+      if (userData.profilePic) {
+        headAv.innerHTML = `<img src="${userData.profilePic}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+      } else {
+        const initials = userData.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+        headAv.textContent = initials;
+        
+        // Aplica cor personalizada se existir
+        if (userData.color) {
+          headAv.style.background = userData.color;
+        }
+      }
       
       // Se for ADM, adiciona um brilho ou borda no avatar do topo
       if (userData.role === 'admin') {
