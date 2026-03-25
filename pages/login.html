@@ -7,12 +7,12 @@
 <script>
   // Se já estiver logado, vai direto para a loja
   if (localStorage.getItem('linkey_logged') === 'true') {
-    window.location.href = 'index.html';
+    window.location.href = '../index.html';
   }
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&display=swap">
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="../css/style.css">
 <style>
   .login-container {
     min-height: 100vh;
@@ -107,7 +107,7 @@
 <div class="login-container">
   <div class="login-card">
     <div class="login-header">
-      <a href="index.html" class="login-logo">LinKey</a>
+      <a href="../index.html" class="login-logo">LinKey</a>
       <p class="login-subtitle">Entre na sua conta para continuar</p>
     </div>
 
@@ -132,11 +132,11 @@
     </div>
   </div>
   
-  <a href="index.html" style="margin-top: 24px; color: var(--muted); font-size: 0.85rem;">← Voltar para a loja</a>
+  <a href="../index.html" style="margin-top: 24px; color: var(--muted); font-size: 0.85rem;">← Voltar para a loja</a>
 </div>
 
 <div class="toast" id="toast"></div>
-<script src="js/script.js"></script>
+<script src="../js/script.js"></script>
 <script>
   // Ao enviar o formulário, simula o login salvando no navegador
   document.getElementById('loginForm').addEventListener('submit', (e) => {
@@ -172,7 +172,7 @@
         role: userFound.role || 'user'
       }));
       
-      window.location.href = 'index.html';
+      window.location.href = '../index.html';
     }, 800);
   });
 </script>

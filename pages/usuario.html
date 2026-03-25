@@ -11,12 +11,12 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&display=swap">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
 
 <header>
-  <a href="index.html" class="logo">LinKey</a>
+  <a href="../index.html" class="logo">LinKey</a>
   <div class="header-actions">
     <button onclick="logout()" class="btn-login" style="background:transparent;border:1px solid var(--border);color:var(--muted);font-size:0.75rem;padding:6px 12px;">Sair</button>
   </div>
@@ -142,7 +142,7 @@
 </div>
 
 <nav class="bottom-nav">
-  <button class="nav-tab" onclick="location.href='index.html'">
+  <button class="nav-tab" onclick="location.href='../index.html'">
     <span class="nav-icon">🏠</span>Início
   </button>
   <button class="nav-tab" onclick="location.href='explorar.html'">
@@ -157,7 +157,7 @@
 </nav>
 
 <div class="toast" id="toast"></div>
-<script src="js/script.js"></script>
+<script src="../js/script.js"></script>
 <script>
   // Carregar dados reais do usuário logado
   const userData = JSON.parse(localStorage.getItem('linkey_user_data'));
