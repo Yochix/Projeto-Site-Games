@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>LinKey — Perfil</title>
+<script>
+  if (localStorage.getItem('linkey_logged') !== 'true') {
+    window.location.href = 'login.html';
+  }
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&display=swap">
 <link rel="stylesheet" href="style.css">
@@ -13,7 +18,7 @@
 <header>
   <a href="index.html" class="logo">LinKey</a>
   <div class="header-actions">
-    <a href="login.html" class="btn-login" style="background:transparent;border:1px solid var(--border);color:var(--muted);font-size:0.75rem;padding:6px 12px;">Sair</a>
+    <button onclick="logout()" class="btn-login" style="background:transparent;border:1px solid var(--border);color:var(--muted);font-size:0.75rem;padding:6px 12px;">Sair</button>
   </div>
 </header>
 
@@ -118,7 +123,7 @@
       <span class="menu-arrow">›</span>
     </button>
 
-    <button class="menu-item danger" onclick="location.href='login.html'">
+    <button class="menu-item danger" onclick="logout()">
       <span class="menu-icon">🚪</span>
       Sair da conta
     </button>

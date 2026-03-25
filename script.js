@@ -129,3 +129,9 @@ function toggleDesc() {
   btn.textContent = col ? 'Ver mais ↓' : 'Ver menos ↑';
 }
 
+// ── LOGOUT ──
+function logout() {
+  localStorage.removeItem('linkey_logged');
+  window.location.href = 'login.html';
+}
+

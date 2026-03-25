@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>LinKey — Jogos Mobile</title>
+<script>
+  // VERIFICAÇÃO DE ACESSO: se não estiver logado, vai para login.html
+  if (localStorage.getItem('linkey_logged') !== 'true') {
+    window.location.href = 'login.html';
+  }
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&display=swap">
 <link rel="stylesheet" href="style.css">

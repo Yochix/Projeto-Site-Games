@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>LinKey — Entrar</title>
+<script>
+  // Se já estiver logado, vai direto para a loja
+  if (localStorage.getItem('linkey_logged') === 'true') {
+    window.location.href = 'index.html';
+  }
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&display=swap">
 <link rel="stylesheet" href="style.css">
@@ -105,7 +111,7 @@
       <p class="login-subtitle">Entre na sua conta para continuar</p>
     </div>
 
-    <form onsubmit="event.preventDefault(); location.href='index.html'">
+    <form id="loginForm">
       <div class="form-group">
         <label for="email">E-mail ou Usuário</label>
         <input type="text" id="email" class="form-input" placeholder="seu@email.com" required>
@@ -126,6 +132,22 @@
   
   <a href="index.html" style="margin-top: 24px; color: var(--muted); font-size: 0.85rem;">← Voltar para a loja</a>
 </div>
+
+<script>
+  // Ao enviar o formulário, simula o login salvando no navegador
+  document.getElementById('loginForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const btn = e.target.querySelector('button');
+    btn.textContent = 'Entrando...';
+    btn.style.opacity = '0.7';
+    btn.disabled = true;
+
+    setTimeout(() => {
+      localStorage.setItem('linkey_logged', 'true');
+      window.location.href = 'index.html';
+    }, 800);
+  });
+</script>
 
 </body>
 </html>
