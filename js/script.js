@@ -143,8 +143,34 @@ document.addEventListener('DOMContentLoaded', () => {
   initSearch();
   initCategories();
   loadUserData();
+  updateHeaderAvatar();
   updateFavoritesUI();
 });
+
+// --- HEADER ---
+function updateHeaderAvatar() {
+  const userData = JSON.parse(localStorage.getItem('linkey_user_data'));
+  if (userData) {
+    const headAv = document.querySelector('.header-avatar');
+    if (headAv) {
+      if (userData.profilePic) {
+        headAv.innerHTML = `<img src="${userData.profilePic}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+      } else {
+        // Iniciais inteligentes (pula preposições como 'da', 'de', 'do')
+        const nameParts = userData.name.split(' ').filter(p => p.length > 2 || p === p.toUpperCase());
+        const initials = (nameParts.length > 1 
+          ? nameParts[0][0] + nameParts[nameParts.length - 1][0] 
+          : nameParts[0].substring(0, 2)
+        ).toUpperCase();
+        
+        headAv.textContent = initials;
+        if (userData.color) {
+          headAv.style.background = userData.color;
+        }
+      }
+    }
+  }
+}
 
 // --- CARROSSEL ---
 function initCarousel() {
