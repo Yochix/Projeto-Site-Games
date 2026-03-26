@@ -795,7 +795,7 @@ function loadUserData() {
     {
       name: "Hi55Five",
       email: "felipelissapera@gmail.com",
-      password: "fefe1234",
+      password: "140709",
       role: "admin",
       color: "linear-gradient(135deg, #cf5bff, #9e5cff)"
     }
