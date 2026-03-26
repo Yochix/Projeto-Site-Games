@@ -66,51 +66,65 @@
 <div class="toast" id="toast"></div>
 <script src="../js/script.js"></script>
 <script>
-  function updateLibrary() {
+  async function updateLibrary() {
     const userDownloads = getFromUser('downloads');
     const userFavorites = getFromUser('favorites');
+    const games = await DB.games.getAll();
     
     const dlList = document.getElementById('libDlList');
     const favGrid = document.getElementById('libFavGrid');
     const favEmpty = document.getElementById('favEmpty');
 
     // Renderizar Downloads
-    if (dlList && userDownloads.length > 0) {
-      dlList.innerHTML = '';
-      userDownloads.forEach(gameName => {
-        const game = GAMES_DATA[gameName] || { cat: "Jogo", img: "https://via.placeholder.com/200" };
-        dlList.innerHTML += `
-          <div class="dl-item">
-            <img src="${game.img}" alt="${gameName}">
-            <div class="dl-item-info">
-              <div class="dl-item-name">${gameName}</div>
-              <div class="dl-item-cat">${game.cat}</div>
+    if (dlList) {
+      if (userDownloads.length > 0) {
+        dlList.innerHTML = '';
+        userDownloads.forEach(gameKey => {
+          const game = games[gameKey] || { name: gameKey, cat: "Jogo", img: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=200&q=70" };
+          dlList.innerHTML += `
+            <div class="dl-item" onclick="location.href='jogo.html?id=${encodeURIComponent(gameKey)}'">
+              <img src="${game.img}" alt="${game.name}">
+              <div class="dl-item-info">
+                <div class="dl-item-name">${game.name}</div>
+                <div class="dl-item-cat">${game.genre || game.cat}</div>
+              </div>
+              <button class="btn-dl baixado" style="width:auto; padding:6px 12px;">Abrir</button>
             </div>
-            <button class="btn-dl baixado" style="width:auto; padding:6px 12px;">Abrir</button>
+          `;
+        });
+      } else {
+        dlList.innerHTML = `
+          <div style="text-align:center; padding:40px 20px; color:var(--muted); font-size:0.9rem;">
+            Sua biblioteca está vazia. <br>
+            <a href="explorar.html" style="color:var(--accent); font-weight:600; margin-top:10px; display:inline-block;">Explorar jogos</a>
           </div>
         `;
-      });
+      }
     }
 
     // Renderizar Favoritos
-    if (favGrid && userFavorites.length > 0) {
-      favGrid.innerHTML = '';
-      userFavorites.forEach(gameName => {
-        const game = GAMES_DATA[gameName] || { cat: "Jogo", img: "https://via.placeholder.com/200" };
-        favGrid.innerHTML += `
-          <div class="game-card" style="animation:none;">
-            <div class="game-card-thumb" style="aspect-ratio:16/9; height:100px;">
-              <img src="${game.img}" alt="">
-              <button class="game-card-fav" onclick="toggleFav(this,event); setTimeout(updateLibrary, 100)">❤️</button>
+    if (favGrid) {
+      if (userFavorites.length > 0) {
+        favGrid.innerHTML = '';
+        userFavorites.forEach(gameKey => {
+          const game = games[gameKey] || { name: gameKey, cat: "Jogo", img: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=200&q=70" };
+          favGrid.innerHTML += `
+            <div class="game-card" style="animation:none;" onclick="location.href='jogo.html?id=${encodeURIComponent(gameKey)}'">
+              <div class="game-card-thumb" style="aspect-ratio:16/9; height:100px;">
+                <img src="${game.img}" alt="">
+                <button class="game-card-fav" onclick="toggleFav(this,event); setTimeout(updateLibrary, 100)">❤️</button>
+              </div>
+              <div class="game-card-info" style="padding:8px;">
+                <div class="game-card-name" style="font-size:0.75rem;">${game.name}</div>
+              </div>
             </div>
-            <div class="game-card-info" style="padding:8px;">
-              <div class="game-card-name" style="font-size:0.75rem;">${gameName}</div>
-            </div>
-          </div>
-        `;
-      });
-    } else if (favEmpty) {
-      favEmpty.style.display = 'block';
+          `;
+        });
+        if (favEmpty) favEmpty.style.display = 'none';
+      } else {
+        favGrid.innerHTML = '';
+        if (favEmpty) favEmpty.style.display = 'block';
+      }
     }
   }
 

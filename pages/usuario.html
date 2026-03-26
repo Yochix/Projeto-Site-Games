@@ -156,86 +156,63 @@
 <script src="../js/script.js"></script>
 <script>
   // Carregar dados reais do usuário logado
-  const userData = JSON.parse(localStorage.getItem('linkey_user_data'));
-  if (userData) {
-    const nameEl = document.getElementById('profName');
-    const emailEl = document.getElementById('profEmail');
-    const initEl = document.getElementById('profInit');
-    const headAv = document.querySelector('.header-avatar');
-    const admBadge = document.getElementById('admBadge');
-    const admSection = document.getElementById('admSection');
+  document.addEventListener('DOMContentLoaded', async () => {
+    const userData = DB.users.getLogged();
+    const games = await DB.games.getAll();
+    const reviews = await DB.reviews.getAll();
     
-    const statDl = document.getElementById('statDl');
-    const statFav = document.getElementById('statFav');
-    const dlList = document.getElementById('userDlList');
-
-    if (nameEl) nameEl.textContent = userData.name;
-    if (emailEl) emailEl.textContent = userData.email;
-    
-    // Foto de perfil ou iniciais
-    if (userData.profilePic && userData.profilePic.trim() !== '') {
-      const imgHtml = `<img src="${userData.profilePic}" style="width:100%; height:100%; border-radius:50%; object-fit:cover; display:block;">`;
-      if (initEl) {
-        initEl.innerHTML = imgHtml;
-        initEl.style.background = 'none';
-      }
-      if (headAv) {
-        headAv.innerHTML = imgHtml;
-        headAv.style.background = 'none';
-      }
-    } else {
-      const nameParts = userData.name.split(' ').filter(p => p.length > 2 || p === p.toUpperCase());
-      const initials = (nameParts.length > 1 
-        ? nameParts[0][0] + nameParts[nameParts.length - 1][0] 
-        : nameParts[0].substring(0, 2)
-      ).toUpperCase();
+    if (userData) {
+      const nameEl = document.getElementById('profName');
+      const emailEl = document.getElementById('profEmail');
+      const initEl = document.getElementById('profInit');
+      const admBadge = document.getElementById('admBadge');
+      const admSection = document.getElementById('admSection');
       
-      if (initEl) initEl.innerHTML = initials;
-      if (headAv) headAv.innerHTML = initials;
+      const statDl = document.getElementById('statDl');
+      const statFav = document.getElementById('statFav');
+      const statRev = document.querySelector('.stat:last-child .stat-value');
 
-      // Aplica cor personalizada do avatar se não tiver foto
-      if (userData.color) {
-        if (initEl) initEl.style.background = userData.color;
-        if (headAv) headAv.style.background = userData.color;
+      if (nameEl) nameEl.textContent = userData.name;
+      if (emailEl) emailEl.textContent = userData.email;
+      
+      // Foto de perfil ou iniciais (Centralizado via script.js updateHeaderAvatar, mas aqui é o avatar grande)
+      if (userData.profilePic && userData.profilePic.trim() !== '') {
+        const imgHtml = `<img src="${userData.profilePic}" style="width:100%; height:100%; border-radius:50%; object-fit:cover; display:block;">`;
+        if (initEl) {
+          initEl.innerHTML = imgHtml;
+          initEl.style.background = 'none';
+        }
+      } else {
+        const nameParts = userData.name.split(' ').filter(p => p.length > 2 || p === p.toUpperCase());
+        const initials = (nameParts.length > 1 
+          ? nameParts[0][0] + nameParts[nameParts.length - 1][0] 
+          : nameParts[0].substring(0, 2)
+        ).toUpperCase();
+        
+        if (initEl) initEl.innerHTML = initials;
+        if (userData.color && initEl) initEl.style.background = userData.color;
       }
-    }
 
-    // Se for ADM, mostra o badge, painel e lista de usuários
-    if (userData.role === 'admin') {
-      if (admBadge) admBadge.style.display = 'block';
-      if (admSection) admSection.style.display = 'block';
-      if (initEl) {
-        initEl.style.boxShadow = '0 0 20px var(--accent)';
-        initEl.style.border = '4px solid rgba(255,255,255,0.2)';
+      // Se for ADM, mostra o badge e painel
+      if (userData.role === 'admin') {
+        if (admBadge) admBadge.style.display = 'block';
+        if (admSection) admSection.style.display = 'block';
+        if (initEl) {
+          initEl.style.boxShadow = '0 0 20px var(--accent)';
+          initEl.style.border = '4px solid rgba(255,255,255,0.1)';
+        }
       }
+
+      // Estatísticas
+      const userDownloads = getFromUser('downloads');
+      const userFavorites = getFromUser('favorites');
+      const userReviews = reviews.filter(r => r.userEmail === userData.email);
+
+      if (statDl) statDl.textContent = userDownloads.length;
+      if (statFav) statFav.textContent = userFavorites.length;
+      if (statRev) statRev.textContent = userReviews.length;
     }
-
-    // Carregar estatísticas e lista de downloads do banco local
-    const userDownloads = getFromUser('downloads');
-    const userFavorites = getFromUser('favorites');
-
-    if (statDl) statDl.textContent = userDownloads.length;
-    if (statFav) statFav.textContent = userFavorites.length;
-
-    // Renderizar lista de downloads
-    if (dlList && userDownloads.length > 0) {
-      dlList.innerHTML = ''; // Limpa o "vazio"
-      userDownloads.forEach(gameName => {
-        const game = GAMES_DATA[gameName] || { cat: "Jogo", img: "https://via.placeholder.com/200" };
-        const item = `
-          <a href="jogo.html" class="dl-item">
-            <img src="${game.img}" alt="${gameName}">
-            <div class="dl-item-info">
-              <div class="dl-item-name">${gameName}</div>
-              <div class="dl-item-cat">${game.cat}</div>
-            </div>
-            <span class="dl-item-badge">✓ Instalado</span>
-          </a>
-        `;
-        dlList.innerHTML += item;
-      });
-    }
-  }
+  });
 </script>
 </body>
 </html>

@@ -147,7 +147,7 @@
 
 <script src="../js/script.js"></script>
 <script>
-  document.getElementById('registerForm').addEventListener('submit', (e) => {
+  document.getElementById('registerForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     
     const name = document.getElementById('name').value;
@@ -157,7 +157,7 @@
     const emailError = document.getElementById('emailError');
 
     // "BANCO DE DADOS": Pegar usuários existentes ou criar array vazio
-    let users = JSON.parse(localStorage.getItem('linkey_users') || '[]');
+    let users = await DB.users.getAll();
 
     // Verificar se e-mail já existe
     if (users.find(u => u.email === email)) {
@@ -170,17 +170,24 @@
     btn.disabled = true;
 
     // Salvar novo usuário
-    users.push({ name, email, password });
-    localStorage.setItem('linkey_users', JSON.stringify(users));
+    users.push({ 
+      name, 
+      email, 
+      password, 
+      role: 'user', 
+      color: 'linear-gradient(135deg, #5b8fff, #7b5cff)' 
+    });
+    await DB.users.saveAll(users);
 
     setTimeout(() => {
       // Logar automaticamente após cadastro
       localStorage.setItem('linkey_logged', 'true');
-      localStorage.setItem('linkey_user_data', JSON.stringify({ 
+      DB.users.setLogged({ 
         name, 
         email,
-        role: 'user'
-      }));
+        role: 'user',
+        color: 'linear-gradient(135deg, #5b8fff, #7b5cff)'
+      });
       
       window.location.href = '../index.html';
     }, 1200);

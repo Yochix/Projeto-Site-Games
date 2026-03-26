@@ -205,7 +205,7 @@
   });
 
   // Ao enviar o formulário, simula o login salvando no navegador
-  document.getElementById('loginForm').addEventListener('submit', (e) => {
+  document.getElementById('loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     
     const email = document.getElementById('email').value;
@@ -214,7 +214,7 @@
     const loginError = document.getElementById('loginError');
 
     // "BANCO DE DADOS": Pegar usuários existentes
-    const users = JSON.parse(localStorage.getItem('linkey_users') || '[]');
+    const users = await DB.users.getAll();
 
     // Verificar se e-mail e senha batem
     const userFound = users.find(u => u.email === email && u.password === password);
@@ -232,13 +232,13 @@
     setTimeout(() => {
       // Salvar estado de login e dados do usuário logado
       localStorage.setItem('linkey_logged', 'true');
-      localStorage.setItem('linkey_user_data', JSON.stringify({ 
+      DB.users.setLogged({ 
         name: userFound.name, 
         email: userFound.email,
         role: userFound.role || 'user',
         profilePic: userFound.profilePic || '',
         color: userFound.color || ''
-      }));
+      });
       
       window.location.href = '../index.html';
     }, 800);
@@ -257,9 +257,9 @@
     document.getElementById('forgotModal').classList.remove('active');
   }
 
-  function checkEmail() {
+  async function checkEmail() {
     const email = document.getElementById('forgotEmail').value;
-    const users = JSON.parse(localStorage.getItem('linkey_users') || '[]');
+    const users = await DB.users.getAll();
     const user = users.find(u => u.email === email);
 
     if (user) {
@@ -272,28 +272,28 @@
     }
   }
 
-  function resetPassword() {
+  async function resetPassword() {
     const newPass = document.getElementById('newPass').value;
     if (newPass.length < 6) {
       showToast("A senha deve ter pelo menos 6 caracteres.");
       return;
     }
 
-    const users = JSON.parse(localStorage.getItem('linkey_users') || '[]');
+    const users = await DB.users.getAll();
     const userIdx = users.findIndex(u => u.email === window.recoveryEmail);
 
     if (userIdx > -1) {
       users[userIdx].password = newPass;
-      localStorage.setItem('linkey_users', JSON.stringify(users));
+      await DB.users.saveAll(users);
       showToast("Senha redefinida com sucesso!");
       closeForgotModal();
     }
   }
 
   function socialLogin(platform, alreadyAuthorized = false) {
-    const handleLogin = () => {
+    const handleLogin = async () => {
       // "BANCO DE DADOS": Pegar usuários existentes
-      let users = JSON.parse(localStorage.getItem('linkey_users') || '[]');
+      let users = await DB.users.getAll();
       let userFound = users.find(u => u.email === `social@${platform.toLowerCase()}.com`);
 
       if (!userFound) {
@@ -316,20 +316,20 @@
         userFound.profilePic = pics[platform] || '';
 
         users.push(userFound);
-        localStorage.setItem('linkey_users', JSON.stringify(users));
+        await DB.users.saveAll(users);
       }
 
       showToast(`${platform} autorizado! Entrando...`);
       setTimeout(() => {
         // Salvar estado de login e dados do usuário logado
         localStorage.setItem('linkey_logged', 'true');
-        localStorage.setItem('linkey_user_data', JSON.stringify({ 
+        DB.users.setLogged({ 
           name: userFound.name, 
           email: userFound.email,
           role: userFound.role || 'user',
           profilePic: userFound.profilePic || '',
           color: userFound.color || ''
-        }));
+        });
         window.location.href = '../index.html';
       }, 1000);
     };

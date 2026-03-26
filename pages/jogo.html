@@ -26,7 +26,7 @@
 
   <!-- HERO -->
   <div class="game-hero">
-    <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=860&q=85" alt="Cyber Raid">
+    <img id="gameHeroImg" src="" alt="">
     <div class="game-hero-overlay"></div>
     <button class="game-hero-back" onclick="history.back()">← Voltar</button>
   </div>
@@ -35,15 +35,15 @@
 
     <!-- TOPO: ícone + info + fav -->
     <div class="game-info-top">
-      <img class="game-icon" src="https://images.unsplash.com/photo-1535223289827-42f1e9919769?w=200&q=80" alt="Cyber Raid icon">
+      <img class="game-icon" id="gameIconImg" src="" alt="">
       <div class="game-meta">
-        <div class="game-page-title">Cyber Raid: Neo Frontier</div>
-        <div class="game-page-cat">Ação · RPG · Multiplayer</div>
-        <div class="game-page-rating">
-          <span class="stars">★★★★★</span> 4.8 <span style="color:var(--border)">·</span> 12.4k avaliações
+        <div class="game-page-title" id="gameTitle">Carregando...</div>
+        <div class="game-page-cat" id="gameCat">...</div>
+        <div class="game-page-rating" id="gameRating">
+          ...
         </div>
       </div>
-      <button onclick="toggleFav(this, event)" style="background:none;border:none;font-size:1.5rem;padding:4px;cursor:pointer;margin-top:4px;">🤍</button>
+      <button id="favBtn" onclick="toggleFav(this, event)" style="background:none;border:none;font-size:1.5rem;padding:4px;cursor:pointer;margin-top:4px;">🤍</button>
     </div>
 
     <!-- BOTÃO DE DOWNLOAD -->
@@ -52,11 +52,8 @@
     <!-- SCREENSHOTS -->
     <div class="game-section">
       <div class="game-section-title">📸 Screenshots</div>
-      <div class="game-screenshots">
-        <img class="screenshot" src="https://images.unsplash.com/photo-1535223289827-42f1e9919769?w=300&q=70" alt="">
-        <img class="screenshot" src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=300&q=70" alt="">
-        <img class="screenshot" src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=300&q=70" alt="">
-        <img class="screenshot" src="https://images.unsplash.com/photo-1500462918059-b1a0cb512f1d?w=300&q=70" alt="">
+      <div class="game-screenshots" id="gameScreenshots">
+        <!-- Screenshots simuladas -->
       </div>
     </div>
 
@@ -64,7 +61,7 @@
     <div class="game-section">
       <div class="game-section-title">📋 Sobre o jogo</div>
       <p class="game-desc collapsed" id="gameDesc">
-        Cyber Raid: Neo Frontier é um RPG de ação no universo cyberpunk onde você assume o papel de um mercenário no submundo digital. Explore cidades neon, monte seu arsenal de habilidades, e enfrente outros jogadores em batalhas online em tempo real. Com gráficos de alta qualidade otimizados para mobile e controles intuitivos, cada missão é uma nova aventura. O jogo conta com mais de 50 missões solo, modo arena PvP, sistema de clãs e atualizações mensais de conteúdo.
+        ...
       </p>
       <button class="btn-read-more" id="readMore" onclick="toggleDesc()">Ver mais ↓</button>
     </div>
@@ -72,49 +69,31 @@
     <!-- TAGS -->
     <div class="game-section">
       <div class="game-section-title">🏷 Categorias</div>
-      <div class="game-tags">
-        <span class="game-tag">Ação</span>
-        <span class="game-tag">RPG</span>
-        <span class="game-tag">Multiplayer</span>
-        <span class="game-tag">Cyberpunk</span>
-        <span class="game-tag">PvP</span>
-        <span class="game-tag">Grátis</span>
-        <span class="game-tag">Online</span>
+      <div class="game-tags" id="gameTags">
+        <!-- Tags dinâmicas -->
       </div>
     </div>
 
     <!-- AVALIAÇÕES -->
     <div class="game-section">
       <div class="game-section-title">⭐ Avaliações</div>
-      <div class="reviews-list">
-
-        <div class="review-item">
-          <div class="review-header">
-            <div class="review-avatar">MR</div>
-            <div class="review-name">Marcos R.</div>
-            <div class="review-stars">★★★★★</div>
-          </div>
-          <div class="review-text">Melhor jogo mobile que já joguei. Os gráficos são incríveis e o sistema de batalha é muito fluído. Recomendo muito!</div>
+      
+      <!-- Novo formulário de avaliação -->
+      <div class="review-item" style="margin-bottom: 24px; border-color: var(--accent);">
+        <div style="font-weight:700; font-size:0.9rem; margin-bottom:12px;">Deixe sua avaliação</div>
+        <div style="display:flex; gap:8px; margin-bottom:12px;" id="ratingStars">
+          <span onclick="setRating(1)" style="cursor:pointer; font-size:1.2rem; color:var(--muted);">☆</span>
+          <span onclick="setRating(2)" style="cursor:pointer; font-size:1.2rem; color:var(--muted);">☆</span>
+          <span onclick="setRating(3)" style="cursor:pointer; font-size:1.2rem; color:var(--muted);">☆</span>
+          <span onclick="setRating(4)" style="cursor:pointer; font-size:1.2rem; color:var(--muted);">☆</span>
+          <span onclick="setRating(5)" style="cursor:pointer; font-size:1.2rem; color:var(--muted);">☆</span>
         </div>
+        <textarea id="reviewText" class="form-input" placeholder="O que você achou do jogo?" style="min-height:80px; margin-bottom:12px; resize:none;"></textarea>
+        <button class="btn-dl-page" style="padding:10px; font-size:0.85rem;" onclick="handlePostReview()">Enviar Comentário</button>
+      </div>
 
-        <div class="review-item">
-          <div class="review-header">
-            <div class="review-avatar">AS</div>
-            <div class="review-name">Ana S.</div>
-            <div class="review-stars">★★★★☆</div>
-          </div>
-          <div class="review-text">Muito viciante! Só perco um pouco no PvP, precisa equilibrar melhor os personagens. Mas o jogo todo é ótimo.</div>
-        </div>
-
-        <div class="review-item">
-          <div class="review-header">
-            <div class="review-avatar">LF</div>
-            <div class="review-name">Lucas F.</div>
-            <div class="review-stars">★★★★★</div>
-          </div>
-          <div class="review-text">Jogando há 3 meses e não consigo parar. O sistema de clãs é incrível, fizemos uma comunidade incrível no jogo.</div>
-        </div>
-
+      <div class="reviews-list" id="reviewsList">
+        <!-- Avaliações serão carregadas aqui -->
       </div>
     </div>
 
@@ -124,32 +103,8 @@
         <span class="section-title" style="font-size:0.88rem;">🎮 Você também pode gostar</span>
         <a href="../index.html" class="section-link">Ver todos</a>
       </div>
-      <div style="display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;padding-bottom:8px;">
-
-        <a href="jogo.html" style="flex:0 0 120px;text-decoration:none;color:inherit;">
-          <img src="https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?w=200&q=70" alt="" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;border:1px solid var(--border);">
-          <div style="font-size:0.75rem;font-weight:500;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Warlords</div>
-          <div style="font-size:0.65rem;color:var(--accent);">Grátis</div>
-        </a>
-
-        <a href="jogo.html" style="flex:0 0 120px;text-decoration:none;color:inherit;">
-          <img src="https://images.unsplash.com/photo-1500462918059-b1a0cb512f1d?w=200&q=70" alt="" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;border:1px solid var(--border);">
-          <div style="font-size:0.75rem;font-weight:500;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Space Wars</div>
-          <div style="font-size:0.65rem;color:var(--accent);">Grátis</div>
-        </a>
-
-        <a href="jogo.html" style="flex:0 0 120px;text-decoration:none;color:inherit;">
-          <img src="https://images.unsplash.com/photo-1486572788966-cfd3df1f5b42?w=200&q=70" alt="" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;border:1px solid var(--border);">
-          <div style="font-size:0.75rem;font-weight:500;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Dungeon Quest</div>
-          <div style="font-size:0.65rem;color:var(--accent);">Grátis</div>
-        </a>
-
-        <a href="jogo.html" style="flex:0 0 120px;text-decoration:none;color:inherit;">
-          <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?w=200&q=70" alt="" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;border:1px solid var(--border);">
-          <div style="font-size:0.75rem;font-weight:500;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Dragon Run</div>
-          <div style="font-size:0.65rem;color:var(--accent);">Grátis</div>
-        </a>
-
+      <div style="display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;padding-bottom:8px;" id="relatedGames">
+        <!-- Sugestões dinâmicas -->
       </div>
     </div>
 
@@ -170,5 +125,112 @@
 
 <div class="toast" id="toast"></div>
 <script src="../js/script.js"></script>
+<script>
+  let currentRating = 0;
+  let currentGameId = "";
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    currentGameId = urlParams.get('id') || "Cyber Raid";
+    
+    await loadGameData();
+    renderReviews();
+    updateFavoritesUI();
+  });
+
+  async function loadGameData() {
+    const games = await DB.games.getAll();
+    const g = games[currentGameId];
+    
+    if (!g) {
+      document.getElementById('gameTitle').textContent = "Jogo não encontrado";
+      return;
+    }
+
+    document.title = `LinKey — ${g.name}`;
+    document.getElementById('gameTitle').textContent = g.name;
+    document.getElementById('gameHeroImg').src = g.img;
+    document.getElementById('gameHeroImg').alt = g.name;
+    document.getElementById('gameIconImg').src = g.img; // Usando a mesma img por enquanto
+    document.getElementById('gameCat').textContent = `${g.genre || g.cat} · Multiplayer`;
+    document.getElementById('gameRating').innerHTML = `<span class="stars">★★★★★</span> ${g.rating} <span style="color:var(--border)">·</span> ${g.reviews} avaliações`;
+    document.getElementById('gameDesc').textContent = g.desc || "Sem descrição disponível.";
+    
+    // Tags
+    const tagsContainer = document.getElementById('gameTags');
+    const tags = [g.cat, g.genre.split(' · ')[0], "Multiplayer", "Online", "Grátis"];
+    tagsContainer.innerHTML = tags.map(t => `<span class="game-tag">${t}</span>`).join('');
+
+    // Screenshots simuladas
+    const ssContainer = document.getElementById('gameScreenshots');
+    const ss = [
+      "https://images.unsplash.com/photo-1535223289827-42f1e9919769?w=300&q=70",
+      "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=300&q=70",
+      "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=300&q=70",
+      "https://images.unsplash.com/photo-1500462918059-b1a0cb512f1d?w=300&q=70"
+    ];
+    ssContainer.innerHTML = ss.map(src => `<img class="screenshot" src="${src}" alt="">`).join('');
+
+    // Jogos Relacionados
+    const relatedContainer = document.getElementById('relatedGames');
+    const related = Object.keys(games).filter(k => k !== currentGameId).slice(0, 5);
+    relatedContainer.innerHTML = related.map(k => `
+      <a href="jogo.html?id=${encodeURIComponent(k)}" style="flex:0 0 120px;text-decoration:none;color:inherit;">
+        <img src="${games[k].img}" alt="" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;border:1px solid var(--border);">
+        <div style="font-size:0.75rem;font-weight:500;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${games[k].name}</div>
+        <div style="font-size:0.65rem;color:var(--accent);">Grátis</div>
+      </a>
+    `).join('');
+  }
+
+  function setRating(n) {
+    currentRating = n;
+    const stars = document.querySelectorAll('#ratingStars span');
+    stars.forEach((s, i) => {
+      s.textContent = i < n ? '⭐' : '☆';
+      s.style.color = i < n ? '#fbbf24' : 'var(--muted)';
+    });
+  }
+
+  async function handlePostReview() {
+    const text = document.getElementById('reviewText').value;
+    if (!text || currentRating === 0) {
+      showToast("Por favor, selecione as estrelas e escreva algo.");
+      return;
+    }
+
+    await saveReview(currentGameId, text, currentRating);
+    
+    document.getElementById('reviewText').value = '';
+    setRating(0);
+    
+    renderReviews();
+  }
+
+  async function renderReviews() {
+    const allReviews = await DB.reviews.getAll();
+    const reviews = allReviews.filter(r => r.game === currentGameId);
+    const container = document.getElementById('reviewsList');
+    
+    if (reviews.length === 0) {
+      container.innerHTML = '<p style="color:var(--muted); font-size:0.85rem; text-align:center;">Nenhuma avaliação ainda. Seja o primeiro!</p>';
+      return;
+    }
+
+    container.innerHTML = reviews.map(r => `
+      <div class="review-item">
+        <div class="review-header">
+          <div class="review-avatar" style="background:var(--bg3); overflow:hidden; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.7rem;">
+            ${r.userPic ? `<img src="${r.userPic}" style="width:100%; height:100%; object-fit:cover;">` : r.userName.substring(0,2).toUpperCase()}
+          </div>
+          <div class="review-name" style="font-size:0.85rem;">${r.userName}</div>
+          <div class="review-stars" style="font-size:0.75rem;">${'⭐'.repeat(r.rating)}</div>
+        </div>
+        <div class="review-text" style="font-size:0.8rem; margin-top:8px;">${r.text}</div>
+        <div style="font-size:0.65rem; color:var(--muted); margin-top:8px;">Postado em ${r.date}</div>
+      </div>
+    `).join('');
+  }
+</script>
 </body>
 </html>

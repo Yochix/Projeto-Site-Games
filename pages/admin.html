@@ -200,7 +200,9 @@
   <div class="admin-tabs">
     <button class="admin-tab-btn active" onclick="switchTab('users', this)">👥 Usuários</button>
     <button class="admin-tab-btn" onclick="switchTab('games', this)">🎮 Catálogo</button>
+    <button class="admin-tab-btn" onclick="switchTab('reviews', this)">⭐ Reviews</button>
     <button class="admin-tab-btn" onclick="switchTab('analytics', this)">📊 Analytics</button>
+    <button class="admin-tab-btn" onclick="switchTab('logs', this)">📜 Logs</button>
     <button class="admin-tab-btn" onclick="switchTab('settings', this)">⚙️ Sistema</button>
   </div>
 
@@ -208,20 +210,38 @@
   <div id="tab-users" class="admin-tab-content">
     <div class="section-header">
       <span class="section-title">Gerenciar Usuários</span>
+      <div class="search-box" style="width: 200px; padding: 6px 12px; height: 36px; margin: 0;">
+        <input type="text" id="searchUsers" placeholder="Buscar..." style="background:transparent; border:none; color:var(--text); width:100%; font-size:0.8rem; outline:none;" oninput="renderAdminUsers()">
+      </div>
     </div>
     <div class="admin-table-container" id="adminUsersList">
       <!-- Users will be injected here -->
     </div>
   </div>
 
-  <!-- Content Section: Games (Simulation) -->
+  <!-- Content Section: Games -->
   <div id="tab-games" class="admin-tab-content" style="display:none;">
     <div class="section-header">
-      <span class="section-title">Catálogo de Jogos</span>
-      <button class="btn-dl-feat" style="padding: 8px 16px; font-size: 0.8rem;">+ Novo Jogo</button>
+      <div style="display:flex; align-items:center; gap:12px;">
+        <span class="section-title">Catálogo</span>
+        <div class="search-box" style="width: 150px; padding: 6px 12px; height: 32px; margin: 0;">
+          <input type="text" id="searchGames" placeholder="Filtrar..." style="background:transparent; border:none; color:var(--text); width:100%; font-size:0.75rem; outline:none;" oninput="renderAdminGames()">
+        </div>
+      </div>
+      <button class="btn-dl-feat" style="padding: 8px 16px; font-size: 0.8rem;" onclick="addNewGame()">+ Novo Jogo</button>
     </div>
     <div class="admin-table-container" id="adminGamesList">
       <!-- Games will be injected here -->
+    </div>
+  </div>
+
+  <!-- Content Section: Reviews -->
+  <div id="tab-reviews" class="admin-tab-content" style="display:none;">
+    <div class="section-header">
+      <span class="section-title">Moderador de Avaliações</span>
+    </div>
+    <div class="admin-table-container" id="adminReviewsList">
+      <!-- Reviews will be injected here -->
     </div>
   </div>
 
@@ -246,28 +266,69 @@
     </div>
   </div>
 
+  <!-- Content Section: Settings -->
+  <div id="tab-settings" class="admin-tab-content" style="display:none;">
+    <div class="section-header">
+      <span class="section-title">Configurações do Sistema</span>
+    </div>
+    <div class="admin-table-container" style="padding:24px; display:flex; flex-direction:column; gap:20px;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <div style="font-weight:700;">Modo de Manutenção</div>
+          <div style="font-size:0.75rem; color:var(--muted);">Impede o acesso de usuários comuns ao site.</div>
+        </div>
+        <button class="btn-action" onclick="toggleMaintenance()">OFF</button>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <div style="font-weight:700;">Novos Cadastros</div>
+          <div style="font-size:0.75rem; color:var(--muted);">Permitir que novas pessoas criem contas.</div>
+        </div>
+        <button class="btn-action" style="background:var(--accent); color:white;">ON</button>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <div style="font-weight:700;">Logs do Sistema</div>
+          <div style="font-size:0.75rem; color:var(--muted);">Nível de detalhamento das atividades.</div>
+        </div>
+        <select style="background:var(--bg3); border:1px solid var(--border); color:var(--text); padding:6px; border-radius:8px;">
+          <option>Básico</option>
+          <option selected>Avançado</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script src="../js/script.js"></script>
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', async () => {
+    await updateAdminStats();
     renderAdminUsers();
     renderAdminGames();
-    updateAdminStats();
+    renderAdminReviews();
+    renderAdminLogs();
   });
 
-  function switchTab(tabId, btn) {
+  async function switchTab(tabId, btn) {
     document.querySelectorAll('.admin-tab-content').forEach(c => c.style.display = 'none');
     document.getElementById(`tab-${tabId}`).style.display = 'block';
     
     document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
+
+    // Refresh data on tab switch
+    if (tabId === 'logs') renderAdminLogs();
+    if (tabId === 'reviews') renderAdminReviews();
+    if (tabId === 'users') renderAdminUsers();
+    if (tabId === 'games') renderAdminGames();
   }
 
-  function updateAdminStats() {
-    const users = JSON.parse(localStorage.getItem('linkey_users') || '[]');
+  async function updateAdminStats() {
+    const users = await DB.users.getAll();
     document.getElementById('statUsers').textContent = users.length;
     
     // Simulação de downloads acumulados
@@ -277,15 +338,20 @@
       const dl = JSON.parse(localStorage.getItem(userKey) || '[]');
       totalDl += dl.length;
     });
-    document.getElementById('statDownloads').textContent = totalDl + 142; // +142 fixo pra parecer real
+    document.getElementById('statDownloads').textContent = totalDl + 142; 
   }
 
-  function renderAdminUsers() {
-    const users = JSON.parse(localStorage.getItem('linkey_users') || '[]');
+  async function renderAdminUsers() {
+    const term = document.getElementById('searchUsers')?.value.toLowerCase() || '';
+    const users = await DB.users.getAll();
     const container = document.getElementById('adminUsersList');
-    const currentUser = JSON.parse(localStorage.getItem('linkey_user_data') || '{}');
+    const currentUser = DB.users.getLogged();
     
-    container.innerHTML = users.map(u => `
+    const filtered = users.filter(u => 
+      u.name.toLowerCase().includes(term) || u.email.toLowerCase().includes(term)
+    );
+
+    container.innerHTML = filtered.map(u => `
       <div class="table-row">
         <div class="header-avatar" style="background:${u.color || 'var(--bg3)'}; width:40px; height:40px; font-size:0.75rem;">
           ${u.name.substring(0,2).toUpperCase()}
@@ -304,13 +370,17 @@
     `).join('');
   }
 
-  function renderAdminGames() {
+  async function renderAdminGames() {
+    const term = document.getElementById('searchGames')?.value.toLowerCase() || '';
     const container = document.getElementById('adminGamesList');
-    // Usando os dados globais definidos no script.js
-    const games = Object.keys(GAMES_DATA);
+    const games = await DB.games.getAll();
     
-    container.innerHTML = games.map(key => {
-      const g = GAMES_DATA[key];
+    const keys = Object.keys(games).filter(key => 
+      games[key].name.toLowerCase().includes(term) || games[key].genre.toLowerCase().includes(term)
+    );
+
+    container.innerHTML = keys.map(key => {
+      const g = games[key];
       return `
         <div class="table-row">
           <img src="${g.img}" style="width:50px; height:50px; border-radius:10px; object-fit:cover;">
@@ -319,34 +389,154 @@
             <div class="table-cell-sub">${g.genre} • ⭐ ${g.rating}</div>
           </div>
           <div class="table-actions">
-            <button class="btn-action">✏️</button>
-            <button class="btn-action danger">👁️</button>
+            <button class="btn-action" onclick="editGame('${key}')">✏️</button>
+            <button class="btn-action danger" onclick="deleteGame('${key}')">🗑️</button>
           </div>
         </div>
       `;
     }).join('');
   }
 
-  function toggleRole(email) {
-    let users = JSON.parse(localStorage.getItem('linkey_users') || '[]');
+  async function renderAdminReviews() {
+    const container = document.getElementById('adminReviewsList');
+    const reviews = await DB.reviews.getAll();
+    
+    if (reviews.length === 0) {
+      container.innerHTML = '<div style="padding:24px; text-align:center; color:var(--muted);">Nenhuma avaliação para moderar.</div>';
+      return;
+    }
+
+    container.innerHTML = reviews.map(r => `
+      <div class="table-row">
+        <div class="review-avatar" style="background:var(--bg3); width:40px; height:40px; font-size:0.75rem;">
+          ${r.userPic ? `<img src="${r.userPic}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">` : r.userName.substring(0,2).toUpperCase()}
+        </div>
+        <div class="table-cell-main">
+          <div class="table-cell-name">${r.userName} <span style="color:var(--muted); font-size:0.7rem; font-weight:400;">avaliou</span> ${r.game}</div>
+          <div class="table-cell-sub" style="margin:4px 0;">${'⭐'.repeat(r.rating)}</div>
+          <div style="font-size:0.85rem; color:var(--text); line-height:1.4;">"${r.text}"</div>
+        </div>
+        <div class="table-actions">
+          <button class="btn-action danger" onclick="deleteReview(${r.id})">🗑️</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  async function deleteReview(id) {
+    if (!confirm("Remover este comentário permanentemente?")) return;
+    const reviews = await DB.reviews.getAll();
+    const r = reviews.find(rev => rev.id === id);
+    await DB.reviews.delete(id);
+    await DB.logs.add("Deletou avaliação", `${r.userName} (${r.game})`);
+    renderAdminReviews();
+    renderAdminLogs();
+    showToast("Comentário removido.");
+  }
+
+  async function deleteGame(key) {
+    if (!confirm(`Deseja remover o jogo "${key}" do catálogo?`)) return;
+    const games = await DB.games.getAll();
+    delete games[key];
+    await DB.games.saveAll(games);
+    await DB.logs.add("Removeu jogo", key);
+    renderAdminGames();
+    renderAdminLogs();
+    showToast("Jogo removido.");
+  }
+
+  async function editGame(key) {
+    const games = await DB.games.getAll();
+    const g = games[key];
+    const newName = prompt("Novo nome do jogo:", g.name);
+    if (newName) {
+      g.name = newName;
+      await DB.games.saveAll(games);
+      await DB.logs.add("Editou jogo", key);
+      renderAdminGames();
+      renderAdminLogs();
+      showToast("Jogo atualizado!");
+    }
+  }
+
+  async function addNewGame() {
+    const name = prompt("Nome do novo jogo:");
+    if (!name) return;
+    
+    const games = await DB.games.getAll();
+    games[name] = {
+      name: name,
+      cat: "acao",
+      genre: "Ação",
+      rating: "5.0",
+      reviews: "0",
+      img: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&q=70",
+      desc: "Novo jogo adicionado via Painel Admin."
+    };
+    
+    await DB.games.saveAll(games);
+    await DB.logs.add("Adicionou novo jogo", name);
+    renderAdminGames();
+    renderAdminLogs();
+    showToast("Novo jogo adicionado ao catálogo!");
+  }
+
+  async function toggleRole(email) {
+    const users = await DB.users.getAll();
     const idx = users.findIndex(u => u.email === email);
     if (idx > -1) {
+      const newRole = users[idx].role === 'admin' ? 'usuário' : 'admin';
       users[idx].role = users[idx].role === 'admin' ? 'user' : 'admin';
-      localStorage.setItem('linkey_users', JSON.stringify(users));
+      await DB.users.saveAll(users);
+      await DB.logs.add("Alterou cargo", `${email} para ${newRole}`);
       renderAdminUsers();
+      renderAdminLogs();
       showToast("Cargo alterado com sucesso!");
     }
   }
 
-  function deleteUser(email) {
+  async function deleteUser(email) {
     if (!confirm(`Tem certeza que deseja deletar o usuário ${email}?`)) return;
     
-    let users = JSON.parse(localStorage.getItem('linkey_users') || '[]');
+    let users = await DB.users.getAll();
     users = users.filter(u => u.email !== email);
-    localStorage.setItem('linkey_users', JSON.stringify(users));
+    await DB.users.saveAll(users);
+    await DB.logs.add("Deletou usuário", email);
     renderAdminUsers();
+    renderAdminLogs();
     updateAdminStats();
     showToast("Usuário removido.");
+  }
+
+  async function renderAdminLogs() {
+    const container = document.getElementById('adminLogsList');
+    const logs = await DB.logs.getAll();
+    
+    if (logs.length === 0) {
+      container.innerHTML = '<div style="padding:24px; text-align:center; color:var(--muted);">Nenhuma atividade registrada.</div>';
+      return;
+    }
+
+    container.innerHTML = logs.map(l => `
+      <div class="table-row">
+        <div class="table-cell-main">
+          <div class="table-cell-name"><span style="color:var(--accent);">${l.adminName}</span> ${l.action}</div>
+          <div class="table-cell-sub">Alvo: <strong>${l.target}</strong></div>
+        </div>
+        <div style="font-size:0.7rem; color:var(--muted);">${l.timestamp}</div>
+      </div>
+    `).join('');
+  }
+
+  async function clearLogs() {
+    if (!confirm("Limpar todo o histórico de atividades?")) return;
+    await DB.logs.clear();
+    renderAdminLogs();
+    showToast("Histórico limpo.");
+  }
+
+  function toggleMaintenance() {
+    showToast("Função em desenvolvimento para futura migração Cloud.");
   }
 </script>
 

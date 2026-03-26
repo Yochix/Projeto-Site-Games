@@ -7,7 +7,8 @@ const GAMES_DATA = {
     rating: "4.8",
     reviews: "12k",
     img: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=640&q=80",
-    desc: "Um RPG de ação futurista ambientado em uma metrópole cyberpunk em expansão."
+    desc: "Um RPG de ação futurista ambientado em uma metrópole cyberpunk em expansão.",
+    featured: true
   },
   "Shadow Keep": {
     name: "Shadow Keep: Escape",
@@ -16,7 +17,8 @@ const GAMES_DATA = {
     rating: "4.5",
     reviews: "8k",
     img: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=640&q=80",
-    desc: "Sobreviva aos horrores que espreitam nas sombras de um castelo amaldiçoado."
+    desc: "Sobreviva aos horrores que espreitam nas sombras de um castelo amaldiçoado.",
+    featured: true
   },
   "Warlords": {
     name: "Warlords: Rise of Empires",
@@ -25,7 +27,8 @@ const GAMES_DATA = {
     rating: "4.7",
     reviews: "20k",
     img: "https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?w=640&q=80",
-    desc: "Construa seu império e lidere seus exércitos rumo à vitória."
+    desc: "Construa seu império e lidere seus exércitos rumo à vitória.",
+    featured: true
   },
   "Orbit One": {
     name: "Orbit One",
@@ -34,7 +37,8 @@ const GAMES_DATA = {
     rating: "4.3",
     reviews: "5k",
     img: "https://images.unsplash.com/photo-1472457897821-70d3819a0e24?w=640&q=80",
-    desc: "Explore a vastidão do espaço e gerencie sua própria estação orbital."
+    desc: "Explore a vastidão do espaço e gerencie sua própria estação orbital.",
+    featured: true
   },
   "Dragon Run": {
     name: "Dragon Run: Endless Quest",
@@ -43,7 +47,8 @@ const GAMES_DATA = {
     rating: "4.9",
     reviews: "31k",
     img: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=640&q=80",
-    desc: "Uma jornada épica através de terras místicas cheias de perigos e tesouros."
+    desc: "Uma jornada épica através de terras místicas cheias de perigos e tesouros.",
+    featured: true
   },
   "Race Fever": {
     name: "Race Fever",
@@ -138,14 +143,151 @@ const GAMES_DATA = {
 };
 
 // --- INICIALIZAÇÃO ---
-document.addEventListener('DOMContentLoaded', () => {
-  initCarousel();
+document.addEventListener('DOMContentLoaded', async () => {
+  await initGameDatabase(); // Inicia o banco de jogos
+  await initCarousel();
   initSearch();
   initCategories();
   loadUserData();
   updateHeaderAvatar();
   updateFavoritesUI();
+  
+  // Renderiza a grid inicial se estiver no index.html
+  if (document.getElementById('grid')) {
+    filterGames();
+  }
 });
+
+// --- SISTEMA DE BANCO DE DADOS (LOCALSTORAGE WRAPPER - PROMISE BASED) ---
+// Centralizamos tudo aqui para facilitar a migração para Firebase/Supabase no futuro.
+const DB = {
+  // Helper para simular delay de rede
+  delay: (ms = 100) => new Promise(resolve => setTimeout(resolve, ms)),
+
+  // USUÁRIOS
+  users: {
+    getAll: async () => {
+      await DB.delay();
+      return JSON.parse(localStorage.getItem('linkey_users') || '[]');
+    },
+    saveAll: async (users) => {
+      await DB.delay();
+      localStorage.setItem('linkey_users', JSON.stringify(users));
+      return true;
+    },
+    getLogged: () => JSON.parse(localStorage.getItem('linkey_user_data') || '{}'),
+    setLogged: (user) => localStorage.setItem('linkey_user_data', JSON.stringify(user)),
+    isLogged: () => localStorage.getItem('linkey_logged') === 'true'
+  },
+  // JOGOS
+  games: {
+    getAll: async () => {
+      await DB.delay();
+      return JSON.parse(localStorage.getItem('linkey_games') || '{}');
+    },
+    saveAll: async (games) => {
+      await DB.delay();
+      localStorage.setItem('linkey_games', JSON.stringify(games));
+      window.dispatchEvent(new Event('gamesUpdated'));
+      return true;
+    },
+    getFeatured: async () => {
+      const games = await DB.games.getAll();
+      return Object.keys(games)
+        .filter(key => games[key].featured)
+        .map(key => ({ key, ...games[key] }));
+    }
+  },
+  // AVALIAÇÕES
+  reviews: {
+    getAll: async () => {
+      await DB.delay();
+      return JSON.parse(localStorage.getItem('linkey_reviews') || '[]');
+    },
+    save: async (review) => {
+      await DB.delay();
+      const reviews = await DB.reviews.getAll();
+      reviews.unshift(review);
+      localStorage.setItem('linkey_reviews', JSON.stringify(reviews));
+      return true;
+    },
+    delete: async (id) => {
+      await DB.delay();
+      const reviews = (await DB.reviews.getAll()).filter(r => r.id !== id);
+      localStorage.setItem('linkey_reviews', JSON.stringify(reviews));
+      return true;
+    }
+  },
+  // LOGS
+  logs: {
+    getAll: async () => {
+      await DB.delay();
+      return JSON.parse(localStorage.getItem('linkey_admin_logs') || '[]');
+    },
+    add: async (action, target) => {
+      await DB.delay();
+      const user = DB.users.getLogged();
+      const logs = await DB.logs.getAll();
+      const newLog = {
+        id: Date.now(),
+        adminName: user.name || 'Sistema',
+        adminEmail: user.email || 'system',
+        action, target,
+        timestamp: new Date().toLocaleString('pt-BR')
+      };
+      logs.unshift(newLog);
+      localStorage.setItem('linkey_admin_logs', JSON.stringify(logs.slice(0, 100)));
+      return true;
+    },
+    clear: async () => {
+      await DB.delay();
+      localStorage.removeItem('linkey_admin_logs');
+      return true;
+    }
+  }
+};
+
+// --- BANCO DE DADOS DE JOGOS ---
+async function initGameDatabase() {
+  if (!localStorage.getItem('linkey_games')) {
+    // Se o banco de jogos não existe, popula com os dados iniciais (GAMES_DATA)
+    await DB.games.saveAll(GAMES_DATA);
+  }
+}
+
+// Helpers para compatibilidade (mantendo síncronos por enquanto se necessário, mas incentivando async)
+function getGames() { return JSON.parse(localStorage.getItem('linkey_games') || '{}'); }
+function saveGames(games) { localStorage.setItem('linkey_games', JSON.stringify(games)); window.dispatchEvent(new Event('gamesUpdated')); }
+
+// --- SISTEMA DE AVALIAÇÕES (REVIEWS) ---
+async function getReviews() { return await DB.reviews.getAll(); }
+
+async function saveReview(gameName, text, rating) {
+  const user = DB.users.getLogged();
+  if (!user.email) {
+    showToast("Você precisa estar logado para avaliar!");
+    return;
+  }
+
+  const newReview = {
+    id: Date.now(),
+    game: gameName,
+    userName: user.name,
+    userEmail: user.email,
+    userPic: user.profilePic || '',
+    text: text,
+    rating: rating,
+    date: new Date().toLocaleDateString('pt-BR')
+  };
+
+  await DB.reviews.save(newReview);
+  showToast("Avaliação enviada!");
+  return newReview;
+}
+
+// --- LOGS DE ATIVIDADE (ADMIN) ---
+async function addAdminLog(action, target) { await DB.logs.add(action, target); }
+async function getAdminLogs() { return await DB.logs.getAll(); }
 
 // --- HEADER ---
 function updateHeaderAvatar() {
@@ -175,13 +317,37 @@ function updateHeaderAvatar() {
 }
 
 // --- CARROSSEL ---
-function initCarousel() {
+async function initCarousel() {
   const track = document.getElementById('carousel');
-  const dots = document.querySelectorAll('.dot');
-  if (!track || !dots.length) return;
+  const dotsContainer = document.getElementById('dots');
+  if (!track || !dotsContainer) return;
 
+  const featuredGames = await DB.games.getFeatured();
+  if (featuredGames.length === 0) return;
+
+  // Renderiza o carrossel dinamicamente
+  track.innerHTML = featuredGames.map(g => `
+    <div class="feat-card" data-name="${g.key}" onclick="location.href='pages/jogo.html?id=${encodeURIComponent(g.key)}'">
+      <img src="${g.img}" alt="${g.name}">
+      <div class="feat-card-body">
+        <div class="feat-card-genre">${g.genre || g.cat}</div>
+        <div class="feat-card-name">${g.name}</div>
+        <div class="feat-card-meta">
+          <div class="rating"><span class="stars">★★★★★</span> ${g.rating} (${g.reviews})</div>
+          <button class="btn-dl-feat" onclick="baixar(this,event)">⬇ Baixar</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  // Renderiza os pontos (dots)
+  dotsContainer.innerHTML = featuredGames.map((_, i) => `
+    <div class="dot ${i === 0 ? 'active' : ''}"></div>
+  `).join('');
+
+  const dots = dotsContainer.querySelectorAll('.dot');
   let currentIndex = 0;
-  const slideCount = dots.length;
+  const slideCount = featuredGames.length;
 
   const updateCarousel = (index) => {
     currentIndex = index;
@@ -195,8 +361,9 @@ function initCarousel() {
     dot.onclick = () => updateCarousel(i);
   });
 
-  // Auto-play (opcional)
-  setInterval(() => {
+  // Auto-play
+  if (window._carouselInterval) clearInterval(window._carouselInterval);
+  window._carouselInterval = setInterval(() => {
     let next = (currentIndex + 1) % slideCount;
     updateCarousel(next);
   }, 5000);
@@ -224,29 +391,58 @@ function initCategories() {
   });
 }
 
-function filterGames(term = '', cat = 'all') {
-  const cards = document.querySelectorAll('.game-card');
+async function filterGames(term = '', cat = 'all') {
+  const container = document.getElementById('grid');
+  if (!container) return;
+
+  const games = await DB.games.getAll();
   const empty = document.getElementById('empty');
   let count = 0;
 
-  cards.forEach(card => {
-    const name = card.dataset.name.toLowerCase();
-    const gameCat = card.dataset.cat;
+  // Limpa o container antes de renderizar
+  container.innerHTML = '';
+
+  Object.keys(games).forEach(key => {
+    const g = games[key];
+    const name = g.name.toLowerCase();
+    const gameCat = g.cat;
     
-    const matchesTerm = name.includes(term);
+    const matchesTerm = name.includes(term.toLowerCase());
     const matchesCat = cat === 'all' || gameCat === cat;
 
     if (matchesTerm && matchesCat) {
-      card.style.display = 'block';
+      const card = document.createElement('div');
+      card.className = 'game-card';
+      card.dataset.name = key;
+      card.dataset.cat = g.cat;
+      card.onclick = () => location.href = `pages/jogo.html?id=${encodeURIComponent(key)}`;
+      
+      card.innerHTML = `
+        <div class="game-card-thumb">
+          <img src="${g.img}" alt="${g.name}">
+          <div class="game-card-overlay"></div>
+          <div class="game-card-tag">${g.genre || g.cat}</div>
+          <button class="game-card-fav" onclick="toggleFav(this,event)">🤍</button>
+        </div>
+        <div class="game-card-info">
+          <div class="game-card-name">${g.name}</div>
+          <div class="game-card-bottom">
+            <div class="game-card-rating">⭐ ${g.rating}</div>
+            <div class="chip chip-free">FREE</div>
+          </div>
+          <button class="btn-dl" onclick="baixar(this,event)">⬇ Baixar</button>
+        </div>
+      `;
+      container.appendChild(card);
       count++;
-    } else {
-      card.style.display = 'none';
     }
   });
 
   if (empty) {
     empty.style.display = count === 0 ? 'block' : 'none';
   }
+  
+  updateFavoritesUI();
 }
 
 // --- FAVORITOS ---

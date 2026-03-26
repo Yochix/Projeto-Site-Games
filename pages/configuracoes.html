@@ -184,10 +184,10 @@
 <div class="toast" id="toast"></div>
 <script src="../js/script.js"></script>
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', async () => {
     // Carregar estados de vinculação reais do usuário logado
-    const user = JSON.parse(localStorage.getItem('linkey_user_data') || '{}');
-    const users = JSON.parse(localStorage.getItem('linkey_users') || '[]');
+    const user = DB.users.getLogged();
+    const users = await DB.users.getAll();
     const currentUser = users.find(u => u.email === user.email);
     
     if (currentUser) {
@@ -199,9 +199,9 @@
     }
   });
 
-  function toggleLink(platform) {
-    const user = JSON.parse(localStorage.getItem('linkey_user_data') || '{}');
-    const users = JSON.parse(localStorage.getItem('linkey_users') || '[]');
+  async function toggleLink(platform) {
+    const user = DB.users.getLogged();
+    const users = await DB.users.getAll();
     const userIdx = users.findIndex(u => u.email === user.email);
     
     if (userIdx === -1) return;
@@ -213,12 +213,12 @@
       if (confirm(`Deseja desvincular sua conta do ${platform}?`)) {
         linked = linked.filter(p => p !== platform);
         users[userIdx].linked = linked;
-        localStorage.setItem('linkey_users', JSON.stringify(users));
+        await DB.users.saveAll(users);
         updateLinkUI(platform, false);
         showToast(`${platform} desvinculado.`);
       }
     } else {
-      openAuthModal(platform, () => {
+      openAuthModal(platform, async () => {
         linked.push(platform);
         users[userIdx].linked = linked;
         
@@ -233,10 +233,10 @@
           
           // Atualiza também a sessão atual
           user.profilePic = pics[platform];
-          localStorage.setItem('linkey_user_data', JSON.stringify(user));
+          DB.users.setLogged(user);
         }
 
-        localStorage.setItem('linkey_users', JSON.stringify(users));
+        await DB.users.saveAll(users);
         updateLinkUI(platform, true);
         showToast(`${platform} vinculado e perfil atualizado!`);
         setTimeout(() => window.location.reload(), 1000);
