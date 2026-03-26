@@ -185,26 +185,44 @@
 <script src="../js/script.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    // Carregar estados de vinculação simulados
-    const platforms = ['Google', 'GitHub', 'Discord'];
-    platforms.forEach(p => {
-      const isLinked = localStorage.getItem(`linkey_linked_${p}`) === 'true';
-      updateLinkUI(p, isLinked);
-    });
+    // Carregar estados de vinculação reais do usuário logado
+    const user = JSON.parse(localStorage.getItem('linkey_user_data') || '{}');
+    const users = JSON.parse(localStorage.getItem('linkey_users') || '[]');
+    const currentUser = users.find(u => u.email === user.email);
+    
+    if (currentUser) {
+      const platforms = ['Google', 'GitHub', 'Discord'];
+      const linked = currentUser.linked || [];
+      platforms.forEach(p => {
+        updateLinkUI(p, linked.includes(p));
+      });
+    }
   });
 
   function toggleLink(platform) {
-    const isLinked = localStorage.getItem(`linkey_linked_${platform}`) === 'true';
+    const user = JSON.parse(localStorage.getItem('linkey_user_data') || '{}');
+    const users = JSON.parse(localStorage.getItem('linkey_users') || '[]');
+    const userIdx = users.findIndex(u => u.email === user.email);
+    
+    if (userIdx === -1) return;
+
+    let linked = users[userIdx].linked || [];
+    const isLinked = linked.includes(platform);
+
     if (isLinked) {
       if (confirm(`Deseja desvincular sua conta do ${platform}?`)) {
-        localStorage.setItem(`linkey_linked_${platform}`, 'false');
+        linked = linked.filter(p => p !== platform);
+        users[userIdx].linked = linked;
+        localStorage.setItem('linkey_users', JSON.stringify(users));
         updateLinkUI(platform, false);
         showToast(`${platform} desvinculado.`);
       }
     } else {
       showToast(`Conectando ao ${platform}...`);
       setTimeout(() => {
-        localStorage.setItem(`linkey_linked_${platform}`, 'true');
+        linked.push(platform);
+        users[userIdx].linked = linked;
+        localStorage.setItem('linkey_users', JSON.stringify(users));
         updateLinkUI(platform, true);
         showToast(`${platform} vinculado com sucesso!`);
       }, 1000);

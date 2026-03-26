@@ -432,7 +432,8 @@ function showToast(msg) {
 // --- AUTENTICAÇÃO E USUÁRIO ---
 function logout() {
   localStorage.removeItem('linkey_logged');
-  localStorage.removeItem('linkey_user_data');
+  // Não removemos mais o linkey_user_data para manter a referência da última sessão se necessário
+  // mas o estado de logado é o que manda.
   
   const path = window.location.pathname;
   if (path.includes('/pages/')) {

@@ -219,7 +219,9 @@
       localStorage.setItem('linkey_user_data', JSON.stringify({ 
         name: userFound.name, 
         email: userFound.email,
-        role: userFound.role || 'user'
+        role: userFound.role || 'user',
+        profilePic: userFound.profilePic || '',
+        color: userFound.color || ''
       }));
       
       window.location.href = '../index.html';
@@ -275,13 +277,32 @@
   function socialLogin(platform) {
     showToast(`Conectando ao ${platform}...`);
     setTimeout(() => {
-      showToast(`${platform} conectado! Entrando...`);
-      // Simula um login social
+      // "BANCO DE DADOS": Pegar usuários existentes
+      let users = JSON.parse(localStorage.getItem('linkey_users') || '[]');
+      let userFound = users.find(u => u.email === `social@${platform.toLowerCase()}.com`);
+
+      if (!userFound) {
+        // Se não existe, cria um usuário "vinculado"
+        userFound = {
+          name: `User ${platform}`,
+          email: `social@${platform.toLowerCase()}.com`,
+          password: Math.random().toString(36).slice(-8), // Senha aleatória
+          role: 'user',
+          color: 'var(--accent)',
+          linked: [platform]
+        };
+        users.push(userFound);
+        localStorage.setItem('linkey_users', JSON.stringify(users));
+      }
+
+      // Salvar estado de login e dados do usuário logado
       localStorage.setItem('linkey_logged', 'true');
       localStorage.setItem('linkey_user_data', JSON.stringify({ 
-        name: `User ${platform}`, 
-        email: `social@${platform.toLowerCase()}.com`,
-        role: 'user'
+        name: userFound.name, 
+        email: userFound.email,
+        role: userFound.role || 'user',
+        profilePic: userFound.profilePic || '',
+        color: userFound.color || ''
       }));
       window.location.href = '../index.html';
     }, 1500);
