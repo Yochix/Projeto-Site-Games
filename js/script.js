@@ -416,6 +416,122 @@ function saveProfile() {
   setTimeout(() => window.location.reload(), 1000);
 }
 
+// --- MODAL DE AUTORIZAÇÃO SOCIAL ---
+function createSocialAuthModal() {
+  if (document.getElementById('socialAuthModal')) return;
+
+  const modal = document.createElement('div');
+  modal.id = 'socialAuthModal';
+  modal.className = 'social-auth-modal';
+  modal.innerHTML = `
+    <div class="auth-card" id="authCard">
+      <div class="auth-header">
+        <div class="auth-logo-circle" id="authPlatformIcon"></div>
+        <div style="font-weight:700; font-size:1.1rem;" id="authPlatformTitle">Google</div>
+      </div>
+      <div class="auth-body">
+        <div class="auth-app-info">
+          <div style="background:var(--accent); width:32px; height:32px; border-radius:6px; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800; font-size:0.7rem;">LK</div>
+          <div style="font-weight:600; font-size:0.9rem; color:#333;">LinKey App</div>
+        </div>
+        <div class="auth-text">
+          O <strong>LinKey</strong> solicita permissão para acessar suas informações básicas de perfil da sua conta <span id="authPlatformName">Google</span>.
+        </div>
+        <div class="auth-permissions">
+          <div class="auth-perm-item">✅ Ver seu nome e foto de perfil</div>
+          <div class="auth-perm-item">✅ Ver seu endereço de e-mail</div>
+        </div>
+        <div style="font-size:0.75rem; color:#999; margin-top:16px;">
+          Ao clicar em "Autorizar", você aceita os Termos de Serviço e a Política de Privacidade do LinKey.
+        </div>
+      </div>
+      <div class="auth-actions">
+        <button class="btn-auth" onclick="closeAuthModal()">Cancelar</button>
+        <button class="btn-auth btn-auth-confirm" id="btnConfirmAuth">Autorizar</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+}
+
+// --- CONFIGURAÇÃO OAUTH REAL (GOOGLE, GITHUB, DISCORD) ---
+// Para funcionar "Real", você precisa registrar seu app e colocar seus IDs aqui.
+const AUTH_CONFIG = {
+  Google: {
+    url: 'https://accounts.google.com/o/oauth2/v2/auth',
+    client_id: '116407038369-ln8k0q4q3blp3jjreu44cq3kk0f9rtom.apps.googleusercontent.com', // ID REAL CONFIGURADO!
+    scope: 'email profile',
+    response_type: 'token'
+  },
+  GitHub: {
+    url: 'https://github.com/login/oauth/authorize',
+    client_id: 'Ov23liK1YgwuTYfozdLU', // ID REAL CONFIGURADO!
+    scope: 'user'
+  },
+  Discord: {
+    url: 'https://discord.com/api/oauth2/authorize',
+    client_id: '1486524196547989514', // ID REAL CONFIGURADO!
+    scope: 'identify email',
+    response_type: 'token'
+  }
+};
+
+function openAuthModal(platform, callback) {
+  createSocialAuthModal();
+  const modal = document.getElementById('socialAuthModal');
+  const card = document.getElementById('authCard');
+  const title = document.getElementById('authPlatformTitle');
+  const name = document.getElementById('authPlatformName');
+  const icon = document.getElementById('authPlatformIcon');
+  const btn = document.getElementById('btnConfirmAuth');
+
+  card.className = 'auth-card ' + platform.toLowerCase();
+  title.textContent = platform;
+  name.textContent = platform;
+  
+  const icons = {
+    'Google': '<img src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png" style="width:24px;">',
+    'GitHub': '<img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" style="width:24px;">',
+    'Discord': '<img src="https://cdn-icons-png.flaticon.com/512/3670/3670157.png" style="width:24px;">'
+  };
+  icon.innerHTML = icons[platform] || '';
+
+  modal.classList.add('active');
+
+  btn.onclick = () => {
+    // REDIRECIONAMENTO REAL PARA A PLATAFORMA
+    const config = AUTH_CONFIG[platform];
+    const redirectUri = window.location.origin + window.location.pathname;
+    
+    let authUrl = `${config.url}?client_id=${config.client_id}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(config.scope)}`;
+    
+    if (config.response_type) {
+      authUrl += `&response_type=${config.response_type}`;
+    }
+
+    // Abre em uma nova janela (Pop-up real)
+    const width = 500, height = 600;
+    const left = (window.innerWidth / 2) - (width / 2);
+    const top = (window.innerHeight / 2) - (height / 2);
+    
+    window.open(authUrl, `Auth ${platform}`, `width=${width},height=${height},top=${top},left=${left}`);
+    
+    // Como é local, vamos simular o retorno após o pop-up abrir (o handshake real exige backend ou Client Secret)
+    // Mas agora a tela REAL da plataforma vai abrir para o usuário.
+    btn.innerHTML = 'Aguardando autorização...';
+    setTimeout(() => {
+      modal.classList.remove('active');
+      btn.innerHTML = 'Autorizar';
+      callback();
+    }, 3000);
+  };
+}
+
+function closeAuthModal() {
+  const modal = document.getElementById('socialAuthModal');
+  if (modal) modal.classList.remove('active');
+}
+
 // --- TOAST ---
 function showToast(msg) {
   const toast = document.getElementById('toast');

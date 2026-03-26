@@ -931,6 +931,121 @@ header {
   line-height: 1.5;
 }
 
+/* Modal Autorização Social */
+.social-auth-modal {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.9);
+  z-index: 3000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.social-auth-modal.active { display: flex; }
+
+.auth-card {
+  background: #fff;
+  color: #333;
+  width: 100%;
+  max-width: 380px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.auth-header {
+  padding: 20px;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+}
+
+.auth-logo-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  margin: 0 auto 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8f9fa;
+}
+
+.auth-body {
+  padding: 24px;
+  text-align: center;
+}
+
+.auth-app-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.auth-app-logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+}
+
+.auth-text {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: #555;
+  margin-bottom: 24px;
+}
+
+.auth-permissions {
+  text-align: left;
+  background: #f8f9fa;
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 24px;
+}
+
+.auth-perm-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: #666;
+  margin-bottom: 6px;
+}
+
+.auth-actions {
+  display: flex;
+  gap: 12px;
+  padding: 16px 24px 24px;
+}
+
+.btn-auth {
+  flex: 1;
+  padding: 10px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid #ddd;
+  background: #fff;
+  transition: 0.2s;
+}
+
+.btn-auth-confirm {
+  background: #1a73e8;
+  color: #fff;
+  border-color: #1a73e8;
+}
+
+.btn-auth-confirm:hover { background: #1557b0; }
+
+/* Variações de cores por plataforma */
+.auth-card.github .btn-auth-confirm { background: #24292e; border-color: #24292e; }
+.auth-card.discord .btn-auth-confirm { background: #5865F2; border-color: #5865F2; }
+
 /* Categories Scroll */
 .categories-wrap {
   margin-bottom: 32px;

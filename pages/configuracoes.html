@@ -218,14 +218,29 @@
         showToast(`${platform} desvinculado.`);
       }
     } else {
-      showToast(`Conectando ao ${platform}...`);
-      setTimeout(() => {
+      openAuthModal(platform, () => {
         linked.push(platform);
         users[userIdx].linked = linked;
+        
+        // Simula a importação da foto da rede social ao vincular
+        if (!users[userIdx].profilePic) {
+          const pics = {
+            'Google': 'https://lh3.googleusercontent.com/a/ACg8ocL8_...',
+            'GitHub': 'https://avatars.githubusercontent.com/u/...',
+            'Discord': 'https://cdn.discordapp.com/avatars/...'
+          };
+          users[userIdx].profilePic = pics[platform];
+          
+          // Atualiza também a sessão atual
+          user.profilePic = pics[platform];
+          localStorage.setItem('linkey_user_data', JSON.stringify(user));
+        }
+
         localStorage.setItem('linkey_users', JSON.stringify(users));
         updateLinkUI(platform, true);
-        showToast(`${platform} vinculado com sucesso!`);
-      }, 1000);
+        showToast(`${platform} vinculado e perfil atualizado!`);
+        setTimeout(() => window.location.reload(), 1000);
+      });
     }
   }
 

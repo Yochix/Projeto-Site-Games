@@ -188,6 +188,22 @@
 <div class="toast" id="toast"></div>
 <script src="../js/script.js"></script>
 <script>
+  // VERIFICAR RETORNO DE TOKEN (OAUTH REAL)
+  document.addEventListener('DOMContentLoaded', () => {
+    const hash = window.location.hash;
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    // Retorno Google/Discord (via hash #access_token) ou GitHub (via ?code)
+    if (hash && hash.includes('access_token')) {
+      const platform = hash.includes('google') ? 'Google' : 'Discord';
+      showToast(`Autenticação ${platform} confirmada!`);
+      setTimeout(() => socialLogin(platform, true), 1000);
+    } else if (urlParams.has('code')) {
+      showToast("Autenticação GitHub confirmada!");
+      setTimeout(() => socialLogin('GitHub', true), 1000);
+    }
+  });
+
   // Ao enviar o formulário, simula o login salvando no navegador
   document.getElementById('loginForm').addEventListener('submit', (e) => {
     e.preventDefault();
@@ -274,9 +290,8 @@
     }
   }
 
-  function socialLogin(platform) {
-    showToast(`Conectando ao ${platform}...`);
-    setTimeout(() => {
+  function socialLogin(platform, alreadyAuthorized = false) {
+    const handleLogin = () => {
       // "BANCO DE DADOS": Pegar usuários existentes
       let users = JSON.parse(localStorage.getItem('linkey_users') || '[]');
       let userFound = users.find(u => u.email === `social@${platform.toLowerCase()}.com`);
@@ -291,21 +306,39 @@
           color: 'var(--accent)',
           linked: [platform]
         };
+        
+        // Simula uma foto de perfil baseada na plataforma
+        const pics = {
+          'Google': 'https://lh3.googleusercontent.com/a/ACg8ocL8_...',
+          'GitHub': 'https://avatars.githubusercontent.com/u/...',
+          'Discord': 'https://cdn.discordapp.com/avatars/...'
+        };
+        userFound.profilePic = pics[platform] || '';
+
         users.push(userFound);
         localStorage.setItem('linkey_users', JSON.stringify(users));
       }
 
-      // Salvar estado de login e dados do usuário logado
-      localStorage.setItem('linkey_logged', 'true');
-      localStorage.setItem('linkey_user_data', JSON.stringify({ 
-        name: userFound.name, 
-        email: userFound.email,
-        role: userFound.role || 'user',
-        profilePic: userFound.profilePic || '',
-        color: userFound.color || ''
-      }));
-      window.location.href = '../index.html';
-    }, 1500);
+      showToast(`${platform} autorizado! Entrando...`);
+      setTimeout(() => {
+        // Salvar estado de login e dados do usuário logado
+        localStorage.setItem('linkey_logged', 'true');
+        localStorage.setItem('linkey_user_data', JSON.stringify({ 
+          name: userFound.name, 
+          email: userFound.email,
+          role: userFound.role || 'user',
+          profilePic: userFound.profilePic || '',
+          color: userFound.color || ''
+        }));
+        window.location.href = '../index.html';
+      }, 1000);
+    };
+
+    if (alreadyAuthorized) {
+      handleLogin();
+    } else {
+      openAuthModal(platform, handleLogin);
+    }
   }
 </script>
 
