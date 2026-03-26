@@ -153,8 +153,10 @@ function updateHeaderAvatar() {
   if (userData) {
     const headAv = document.querySelector('.header-avatar');
     if (headAv) {
-      if (userData.profilePic) {
-        headAv.innerHTML = `<img src="${userData.profilePic}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+      // Prioridade total para a foto
+      if (userData.profilePic && userData.profilePic.trim() !== '') {
+        headAv.innerHTML = `<img src="${userData.profilePic}" style="width:100%; height:100%; border-radius:50%; object-fit:cover; display:block;">`;
+        headAv.style.background = 'none';
       } else {
         // Iniciais inteligentes (pula preposições como 'da', 'de', 'do')
         const nameParts = userData.name.split(' ').filter(p => p.length > 2 || p === p.toUpperCase());
@@ -163,7 +165,7 @@ function updateHeaderAvatar() {
           : nameParts[0].substring(0, 2)
         ).toUpperCase();
         
-        headAv.textContent = initials;
+        headAv.innerHTML = initials; // Usa innerHTML para limpar imagem anterior
         if (userData.color) {
           headAv.style.background = userData.color;
         }

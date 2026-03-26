@@ -119,7 +119,7 @@
       <span class="menu-arrow">›</span>
     </button>
 
-    <button class="menu-item" onclick="location.href='#'">
+    <button class="menu-item" onclick="location.href='configuracoes.html'">
       <span class="menu-icon">⚙️</span>
       Configurações
       <span class="menu-arrow">›</span>
@@ -173,9 +173,16 @@
     if (emailEl) emailEl.textContent = userData.email;
     
     // Foto de perfil ou iniciais
-    if (userData.profilePic) {
-      if (initEl) initEl.innerHTML = `<img src="${userData.profilePic}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
-      if (headAv) headAv.innerHTML = `<img src="${userData.profilePic}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+    if (userData.profilePic && userData.profilePic.trim() !== '') {
+      const imgHtml = `<img src="${userData.profilePic}" style="width:100%; height:100%; border-radius:50%; object-fit:cover; display:block;">`;
+      if (initEl) {
+        initEl.innerHTML = imgHtml;
+        initEl.style.background = 'none';
+      }
+      if (headAv) {
+        headAv.innerHTML = imgHtml;
+        headAv.style.background = 'none';
+      }
     } else {
       const nameParts = userData.name.split(' ').filter(p => p.length > 2 || p === p.toUpperCase());
       const initials = (nameParts.length > 1 
@@ -183,8 +190,8 @@
         : nameParts[0].substring(0, 2)
       ).toUpperCase();
       
-      if (initEl) initEl.textContent = initials;
-      if (headAv) headAv.textContent = initials;
+      if (initEl) initEl.innerHTML = initials;
+      if (headAv) headAv.innerHTML = initials;
 
       // Aplica cor personalizada do avatar se não tiver foto
       if (userData.color) {

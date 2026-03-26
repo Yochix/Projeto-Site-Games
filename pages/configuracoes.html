@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>LinKey — Configurações</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&display=swap">
+<link rel="stylesheet" href="../css/style.css">
+<style>
+  .settings-section {
+    margin-bottom: 32px;
+  }
+  .settings-section-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+    padding-left: 4px;
+  }
+  .setting-item {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: 0.2s;
+  }
+  .setting-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .setting-name {
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+  .setting-desc {
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+  
+  /* Toggle Switch */
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+  }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: var(--bg3);
+    transition: .4s;
+    border-radius: 24px;
+    border: 1px solid var(--border);
+  }
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 16px; width: 16px;
+    left: 4px; bottom: 3px;
+    background-color: var(--text);
+    transition: .4s;
+    border-radius: 50%;
+  }
+  input:checked + .slider { background-color: var(--accent); border-color: var(--accent); }
+  input:checked + .slider:before { transform: translateX(20px); }
+
+  /* Social Connection */
+  .social-connect {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  .social-connect:hover { border-color: var(--accent); }
+  .social-icon { width: 24px; height: 24px; }
+  .social-status { font-size: 0.75rem; font-weight: 700; margin-left: auto; }
+  .status-linked { color: #10b981; }
+  .status-unlinked { color: var(--muted); }
+</style>
+</head>
+<body>
+
+<header>
+  <button class="game-hero-back" onclick="location.href='usuario.html'" style="position: static; margin-right: 15px;">←</button>
+  <a href="../index.html" class="logo" style="flex: 1;">Configurações</a>
+  <div class="header-actions">
+    <a href="usuario.html" class="header-avatar" id="headAv"></a>
+  </div>
+</header>
+
+<div class="page-inner">
+  
+  <div class="settings-section">
+    <div class="settings-section-title">🎨 Aparência e Tema</div>
+    <div class="setting-item">
+      <div class="setting-info">
+        <span class="setting-name">Modo Escuro (Glass)</span>
+        <span class="setting-desc">Ativar transparência e desfoque no design</span>
+      </div>
+      <label class="switch">
+        <input type="checkbox" checked onchange="showToast('Alteração salva!')">
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div class="setting-item">
+      <div class="setting-info">
+        <span class="setting-name">Animações de Interface</span>
+        <span class="setting-desc">Efeitos suaves ao navegar pelas páginas</span>
+      </div>
+      <label class="switch">
+        <input type="checkbox" checked onchange="showToast('Preferência atualizada!')">
+        <span class="slider"></span>
+      </label>
+    </div>
+  </div>
+
+  <div class="settings-section">
+    <div class="settings-section-title">🔗 Contas Vinculadas</div>
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <div class="social-connect" onclick="toggleLink('Google')">
+        <img src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png" class="social-icon">
+        <span class="setting-name">Google</span>
+        <span class="social-status status-unlinked" id="status-Google">Não vinculado</span>
+      </div>
+      <div class="social-connect" onclick="toggleLink('GitHub')">
+        <img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" class="social-icon" style="filter: invert(1);">
+        <span class="setting-name">GitHub</span>
+        <span class="social-status status-unlinked" id="status-GitHub">Não vinculado</span>
+      </div>
+      <div class="social-connect" onclick="toggleLink('Discord')">
+        <img src="https://cdn-icons-png.flaticon.com/512/3670/3670157.png" class="social-icon">
+        <span class="setting-name">Discord</span>
+        <span class="social-status status-unlinked" id="status-Discord">Não vinculado</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="settings-section">
+    <div class="settings-section-title">🔒 Privacidade e Segurança</div>
+    <div class="setting-item" onclick="location.href='login.html'">
+      <div class="setting-info">
+        <span class="setting-name">Alterar Senha</span>
+        <span class="setting-desc">Última alteração há 2 meses</span>
+      </div>
+      <span class="menu-arrow">›</span>
+    </div>
+    <div class="setting-item">
+      <div class="setting-info">
+        <span class="setting-name">Perfil Público</span>
+        <span class="setting-desc">Permitir que outros vejam seus favoritos</span>
+      </div>
+      <label class="switch">
+        <input type="checkbox" onchange="showToast('Privacidade atualizada!')">
+        <span class="slider"></span>
+      </label>
+    </div>
+  </div>
+
+  <div class="settings-section">
+    <div class="settings-section-title">⚙️ Sistema</div>
+    <button class="menu-item danger" style="background: var(--bg2); border-color: var(--border);" onclick="confirmDelete()">
+      <span class="menu-icon">🗑️</span>
+      Excluir minha conta
+    </button>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="../js/script.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Carregar estados de vinculação simulados
+    const platforms = ['Google', 'GitHub', 'Discord'];
+    platforms.forEach(p => {
+      const isLinked = localStorage.getItem(`linkey_linked_${p}`) === 'true';
+      updateLinkUI(p, isLinked);
+    });
+  });
+
+  function toggleLink(platform) {
+    const isLinked = localStorage.getItem(`linkey_linked_${platform}`) === 'true';
+    if (isLinked) {
+      if (confirm(`Deseja desvincular sua conta do ${platform}?`)) {
+        localStorage.setItem(`linkey_linked_${platform}`, 'false');
+        updateLinkUI(platform, false);
+        showToast(`${platform} desvinculado.`);
+      }
+    } else {
+      showToast(`Conectando ao ${platform}...`);
+      setTimeout(() => {
+        localStorage.setItem(`linkey_linked_${platform}`, 'true');
+        updateLinkUI(platform, true);
+        showToast(`${platform} vinculado com sucesso!`);
+      }, 1000);
+    }
+  }
+
+  function updateLinkUI(platform, linked) {
+    const el = document.getElementById(`status-${platform}`);
+    if (el) {
+      el.textContent = linked ? 'Vinculado' : 'Não vinculado';
+      el.className = `social-status ${linked ? 'status-linked' : 'status-unlinked'}`;
+    }
+  }
+
+  function confirmDelete() {
+    if (confirm("TEM CERTEZA? Isso excluirá todos os seus dados e jogos baixados. Esta ação não pode ser desfeita.")) {
+      logout();
+    }
+  }
+</script>
+</body>
+</html>

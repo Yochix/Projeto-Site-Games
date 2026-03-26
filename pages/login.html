@@ -128,6 +128,26 @@
       <button type="submit" class="btn-login-submit" id="loginBtn">Entrar</button>
     </form>
 
+    <div style="margin-top: 24px; text-align: center;">
+      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+        <div style="flex: 1; height: 1px; background: var(--border);"></div>
+        <span style="font-size: 0.75rem; color: var(--muted); font-weight: 600; text-transform: uppercase;">ou entrar com</span>
+        <div style="flex: 1; height: 1px; background: var(--border);"></div>
+      </div>
+      
+      <div style="display: flex; justify-content: center; gap: 16px;">
+        <button class="btn-action" style="width: 50px; height: 50px; border-radius: 50%;" onclick="socialLogin('Google')">
+          <img src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png" style="width: 24px;">
+        </button>
+        <button class="btn-action" style="width: 50px; height: 50px; border-radius: 50%;" onclick="socialLogin('GitHub')">
+          <img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" style="width: 24px; filter: invert(1);">
+        </button>
+        <button class="btn-action" style="width: 50px; height: 50px; border-radius: 50%;" onclick="socialLogin('Discord')">
+          <img src="https://cdn-icons-png.flaticon.com/512/3670/3670157.png" style="width: 24px;">
+        </button>
+      </div>
+    </div>
+
     <div id="loginError" class="error-msg" style="color: #f87171; font-size: 0.8rem; margin-top: 10px; text-align: center; display: none;">E-mail ou senha incorretos.</div>
 
     <div class="login-footer">
@@ -250,6 +270,21 @@
       showToast("Senha redefinida com sucesso!");
       closeForgotModal();
     }
+  }
+
+  function socialLogin(platform) {
+    showToast(`Conectando ao ${platform}...`);
+    setTimeout(() => {
+      showToast(`${platform} conectado! Entrando...`);
+      // Simula um login social
+      localStorage.setItem('linkey_logged', 'true');
+      localStorage.setItem('linkey_user_data', JSON.stringify({ 
+        name: `User ${platform}`, 
+        email: `social@${platform.toLowerCase()}.com`,
+        role: 'user'
+      }));
+      window.location.href = '../index.html';
+    }, 1500);
   }
 </script>
 
