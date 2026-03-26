@@ -8,7 +8,7 @@
   // Segurança: Se não for admin, volta para a home
   const user = JSON.parse(localStorage.getItem('linkey_user_data') || '{}');
   if (user.role !== 'admin') {
-    window.location.href = '../index.html';
+    window.location.href = '../../index.html';
   }
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -161,7 +161,7 @@
 <body>
 
 <header>
-  <a href="../index.html" class="logo">LinKey</a>
+  <a href="../../index.html" class="logo">LinKey</a>
   <div class="header-actions">
     <a href="usuario.html" class="header-avatar" id="headAv"></a>
   </div>
@@ -248,21 +248,18 @@
   <!-- Content Section: Analytics -->
   <div id="tab-analytics" class="admin-tab-content" style="display:none;">
     <div class="section-header">
-      <span class="section-title">Engajamento Semanal</span>
+      <span class="section-title">Atividade de Admins (Últimos 100 Logs)</span>
     </div>
-    <div class="chart-box">
-      <div class="chart-bars">
-        <div class="chart-bar" style="height: 40%;"></div>
-        <div class="chart-bar" style="height: 70%;"></div>
-        <div class="chart-bar" style="height: 55%;"></div>
-        <div class="chart-bar" style="height: 90%;"></div>
-        <div class="chart-bar" style="height: 30%;"></div>
-        <div class="chart-bar" style="height: 85%;"></div>
-        <div class="chart-bar" style="height: 60%;"></div>
+    <div class="chart-box" id="analyticsChart">
+      <div class="chart-bars" id="adminActivityBars">
+        <!-- Gerado via JS -->
       </div>
-      <div style="display:flex; justify-content:space-between; color:var(--muted); font-size:0.65rem;">
-        <span>SEG</span><span>TER</span><span>QUA</span><span>QUI</span><span>SEX</span><span>SAB</span><span>DOM</span>
+      <div style="display:flex; justify-content:space-between; color:var(--muted); font-size:0.65rem;" id="chartLabels">
+        <!-- Labels via JS -->
       </div>
+    </div>
+    <div style="font-size:0.8rem; color:var(--muted); text-align:center;">
+      O gráfico mostra o volume de ações realizadas por cada administrador.
     </div>
   </div>
 
@@ -303,6 +300,17 @@
 
 <div class="toast" id="toast"></div>
 
+  <!-- Content Section: Logs -->
+  <div id="tab-logs" class="admin-tab-content" style="display:none;">
+    <div class="section-header">
+      <span class="section-title">Logs do Sistema</span>
+      <button class="btn-dl-feat" style="padding: 8px 16px; font-size: 0.8rem; background:#ef4444;" onclick="clearLogs()">Limpar Logs</button>
+    </div>
+    <div class="admin-table-container" id="adminLogsList">
+      <!-- Logs via JS -->
+    </div>
+  </div>
+
 <script src="../js/script.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', async () => {
@@ -325,6 +333,39 @@
     if (tabId === 'reviews') renderAdminReviews();
     if (tabId === 'users') renderAdminUsers();
     if (tabId === 'games') renderAdminGames();
+    if (tabId === 'analytics') renderAnalytics();
+  }
+
+  async function renderAnalytics() {
+    const logs = await DB.logs.getAll();
+    const barsContainer = document.getElementById('adminActivityBars');
+    const labelsContainer = document.getElementById('chartLabels');
+    
+    if (!barsContainer) return;
+
+    // Agrupar logs por administrador
+    const stats = {};
+    logs.forEach(l => {
+      stats[l.adminName] = (stats[l.adminName] || 0) + 1;
+    });
+
+    const adminNames = Object.keys(stats);
+    if (adminNames.length === 0) {
+      barsContainer.innerHTML = '<div style="width:100%; text-align:center; color:var(--muted);">Sem dados de atividade.</div>';
+      labelsContainer.innerHTML = '';
+      return;
+    }
+
+    const maxActions = Math.max(...Object.values(stats));
+    
+    barsContainer.innerHTML = adminNames.map(name => {
+      const height = (stats[name] / maxActions) * 100;
+      return `<div class="chart-bar" style="height: ${height}%;" title="${stats[name]} ações"></div>`;
+    }).join('');
+
+    labelsContainer.innerHTML = adminNames.map(name => {
+      return `<span style="flex:1; text-align:center; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; padding:0 4px;">${name}</span>`;
+    }).join('');
   }
 
   async function updateAdminStats() {

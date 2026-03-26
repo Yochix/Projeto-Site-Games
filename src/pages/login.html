@@ -7,7 +7,7 @@
 <script>
   // Se já estiver logado, vai direto para a loja
   if (localStorage.getItem('linkey_logged') === 'true') {
-    window.location.href = '../index.html';
+    window.location.href = '../../index.html';
   }
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -107,7 +107,7 @@
 <div class="login-container">
   <div class="login-card">
     <div class="login-header">
-      <a href="../index.html" class="login-logo">LinKey</a>
+      <a href="../../index.html" class="login-logo">LinKey</a>
       <p class="login-subtitle">Entre na sua conta para continuar</p>
     </div>
 
@@ -155,7 +155,7 @@
     </div>
   </div>
   
-  <a href="../index.html" style="margin-top: 24px; color: var(--muted); font-size: 0.85rem;">← Voltar para a loja</a>
+  <a href="../../index.html" style="margin-top: 24px; color: var(--muted); font-size: 0.85rem;">← Voltar para a loja</a>
 </div>
 
 <!-- MODAL ESQUECI A SENHA -->
@@ -240,7 +240,7 @@
         color: userFound.color || ''
       });
       
-      window.location.href = '../index.html';
+      window.location.href = '../../index.html';
     }, 800);
   });
 
@@ -330,7 +330,7 @@
           profilePic: userFound.profilePic || '',
           color: userFound.color || ''
         });
-        window.location.href = '../index.html';
+        window.location.href = '../../index.html';
       }, 1000);
     };
 

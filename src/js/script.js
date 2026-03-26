@@ -1,4 +1,105 @@
-// Mock de dados dos jogos
+// Importações de dados e API (Simulado, pois o navegador precisa de type="module")
+// Em um sistema real, carregaríamos aqui. Como estamos no navegador direto, 
+// o DB e GAMES_DATA continuarão aqui mas organizados para fácil migração.
+
+// --- BANCO DE DADOS DE JOGOS ---
+async function initGameDatabase() {
+  if (!localStorage.getItem('linkey_games')) {
+    // Se o banco de jogos não existe, popula com os dados iniciais
+    await DB.games.saveAll(GAMES_DATA);
+  }
+}
+
+// --- SISTEMA DE BANCO DE DADOS (LOCALSTORAGE WRAPPER - PROMISE BASED) ---
+// Centralizamos tudo aqui para facilitar a migração para Firebase/Supabase no futuro.
+const DB = {
+  // Helper para simular delay de rede
+  delay: (ms = 100) => new Promise(resolve => setTimeout(resolve, ms)),
+
+  // USUÁRIOS
+  users: {
+    getAll: async () => {
+      await DB.delay();
+      return JSON.parse(localStorage.getItem('linkey_users') || '[]');
+    },
+    saveAll: async (users) => {
+      await DB.delay();
+      localStorage.setItem('linkey_users', JSON.stringify(users));
+      return true;
+    },
+    getLogged: () => JSON.parse(localStorage.getItem('linkey_user_data') || '{}'),
+    setLogged: (user) => localStorage.setItem('linkey_user_data', JSON.stringify(user)),
+    isLogged: () => localStorage.getItem('linkey_logged') === 'true'
+  },
+  // JOGOS
+  games: {
+    getAll: async () => {
+      await DB.delay();
+      return JSON.parse(localStorage.getItem('linkey_games') || '{}');
+    },
+    saveAll: async (games) => {
+      await DB.delay();
+      localStorage.setItem('linkey_games', JSON.stringify(games));
+      window.dispatchEvent(new Event('gamesUpdated'));
+      return true;
+    },
+    getFeatured: async () => {
+      const games = await DB.games.getAll();
+      return Object.keys(games)
+        .filter(key => games[key].featured)
+        .map(key => ({ key, ...games[key] }));
+    }
+  },
+  // AVALIAÇÕES
+  reviews: {
+    getAll: async () => {
+      await DB.delay();
+      return JSON.parse(localStorage.getItem('linkey_reviews') || '[]');
+    },
+    save: async (review) => {
+      await DB.delay();
+      const reviews = await DB.reviews.getAll();
+      reviews.unshift(review);
+      localStorage.setItem('linkey_reviews', JSON.stringify(reviews));
+      return true;
+    },
+    delete: async (id) => {
+      await DB.delay();
+      const reviews = (await DB.reviews.getAll()).filter(r => r.id !== id);
+      localStorage.setItem('linkey_reviews', JSON.stringify(reviews));
+      return true;
+    }
+  },
+  // LOGS
+  logs: {
+    getAll: async () => {
+      await DB.delay();
+      return JSON.parse(localStorage.getItem('linkey_admin_logs') || '[]');
+    },
+    add: async (action, target) => {
+      await DB.delay();
+      const user = DB.users.getLogged();
+      const logs = await DB.logs.getAll();
+      const newLog = {
+        id: Date.now(),
+        adminName: user.name || 'Sistema',
+        adminEmail: user.email || 'system',
+        action, target,
+        timestamp: new Date().toLocaleString('pt-BR')
+      };
+      logs.unshift(newLog);
+      localStorage.setItem('linkey_admin_logs', JSON.stringify(logs.slice(0, 100)));
+      return true;
+    },
+    clear: async () => {
+      await DB.delay();
+      localStorage.removeItem('linkey_admin_logs');
+      return true;
+    }
+  }
+};
+
+// Dados Iniciais (MOCK)
 const GAMES_DATA = {
   "Cyber Raid": {
     name: "Cyber Raid: Neo Frontier",
@@ -158,94 +259,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 });
 
-// --- SISTEMA DE BANCO DE DADOS (LOCALSTORAGE WRAPPER - PROMISE BASED) ---
-// Centralizamos tudo aqui para facilitar a migração para Firebase/Supabase no futuro.
-const DB = {
-  // Helper para simular delay de rede
-  delay: (ms = 100) => new Promise(resolve => setTimeout(resolve, ms)),
-
-  // USUÁRIOS
-  users: {
-    getAll: async () => {
-      await DB.delay();
-      return JSON.parse(localStorage.getItem('linkey_users') || '[]');
-    },
-    saveAll: async (users) => {
-      await DB.delay();
-      localStorage.setItem('linkey_users', JSON.stringify(users));
-      return true;
-    },
-    getLogged: () => JSON.parse(localStorage.getItem('linkey_user_data') || '{}'),
-    setLogged: (user) => localStorage.setItem('linkey_user_data', JSON.stringify(user)),
-    isLogged: () => localStorage.getItem('linkey_logged') === 'true'
-  },
-  // JOGOS
-  games: {
-    getAll: async () => {
-      await DB.delay();
-      return JSON.parse(localStorage.getItem('linkey_games') || '{}');
-    },
-    saveAll: async (games) => {
-      await DB.delay();
-      localStorage.setItem('linkey_games', JSON.stringify(games));
-      window.dispatchEvent(new Event('gamesUpdated'));
-      return true;
-    },
-    getFeatured: async () => {
-      const games = await DB.games.getAll();
-      return Object.keys(games)
-        .filter(key => games[key].featured)
-        .map(key => ({ key, ...games[key] }));
-    }
-  },
-  // AVALIAÇÕES
-  reviews: {
-    getAll: async () => {
-      await DB.delay();
-      return JSON.parse(localStorage.getItem('linkey_reviews') || '[]');
-    },
-    save: async (review) => {
-      await DB.delay();
-      const reviews = await DB.reviews.getAll();
-      reviews.unshift(review);
-      localStorage.setItem('linkey_reviews', JSON.stringify(reviews));
-      return true;
-    },
-    delete: async (id) => {
-      await DB.delay();
-      const reviews = (await DB.reviews.getAll()).filter(r => r.id !== id);
-      localStorage.setItem('linkey_reviews', JSON.stringify(reviews));
-      return true;
-    }
-  },
-  // LOGS
-  logs: {
-    getAll: async () => {
-      await DB.delay();
-      return JSON.parse(localStorage.getItem('linkey_admin_logs') || '[]');
-    },
-    add: async (action, target) => {
-      await DB.delay();
-      const user = DB.users.getLogged();
-      const logs = await DB.logs.getAll();
-      const newLog = {
-        id: Date.now(),
-        adminName: user.name || 'Sistema',
-        adminEmail: user.email || 'system',
-        action, target,
-        timestamp: new Date().toLocaleString('pt-BR')
-      };
-      logs.unshift(newLog);
-      localStorage.setItem('linkey_admin_logs', JSON.stringify(logs.slice(0, 100)));
-      return true;
-    },
-    clear: async () => {
-      await DB.delay();
-      localStorage.removeItem('linkey_admin_logs');
-      return true;
-    }
-  }
-};
 
 // --- BANCO DE DADOS DE JOGOS ---
 async function initGameDatabase() {
@@ -327,7 +340,7 @@ async function initCarousel() {
 
   // Renderiza o carrossel dinamicamente
   track.innerHTML = featuredGames.map(g => `
-    <div class="feat-card" data-name="${g.key}" onclick="location.href='pages/jogo.html?id=${encodeURIComponent(g.key)}'">
+    <div class="feat-card" data-name="${g.key}" onclick="location.href='src/pages/jogo.html?id=${encodeURIComponent(g.key)}'">
       <img src="${g.img}" alt="${g.name}">
       <div class="feat-card-body">
         <div class="feat-card-genre">${g.genre || g.cat}</div>
@@ -415,7 +428,7 @@ async function filterGames(term = '', cat = 'all') {
       card.className = 'game-card';
       card.dataset.name = key;
       card.dataset.cat = g.cat;
-      card.onclick = () => location.href = `pages/jogo.html?id=${encodeURIComponent(key)}`;
+      card.onclick = () => location.href = `src/pages/jogo.html?id=${encodeURIComponent(key)}`;
       
       card.innerHTML = `
         <div class="game-card-thumb">
@@ -748,10 +761,10 @@ function logout() {
   // mas o estado de logado é o que manda.
   
   const path = window.location.pathname;
-  if (path.includes('/pages/')) {
+  if (path.includes('/src/pages/')) {
     window.location.href = 'login.html';
   } else {
-    window.location.href = 'pages/login.html';
+    window.location.href = 'src/pages/login.html';
   }
 }
 
